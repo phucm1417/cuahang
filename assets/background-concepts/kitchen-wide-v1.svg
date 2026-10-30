@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1000" viewBox="0 0 1800 1000" shape-rendering="crispEdges">
+  <defs>
+    <linearGradient id="wall" x2="0" y2="1"><stop stop-color="#f8e9c9"/><stop offset="1" stop-color="#e9d8b4"/></linearGradient>
+    <linearGradient id="floor" x2="0" y2="1"><stop stop-color="#f1e8d1"/><stop offset="1" stop-color="#e3d8bc"/></linearGradient>
+    <pattern id="tile" width="100" height="76" patternUnits="userSpaceOnUse"><rect width="100" height="76" fill="#f5edda"/><path d="M0 0h100v76H0z" fill="none" stroke="#d6c9a8" stroke-width="3"/><path d="M8 8h84v60H8z" fill="#fff8e8" opacity=".45"/><path d="M14 15h20v3H14zM72 55h18v3H72z" fill="#e9dfc8" opacity=".65"/></pattern>
+    <linearGradient id="wood" x2="0" y2="1"><stop stop-color="#c38b55"/><stop offset="1" stop-color="#936344"/></linearGradient>
+    <linearGradient id="sage" x2="0" y2="1"><stop stop-color="#a8b58c"/><stop offset="1" stop-color="#71846d"/></linearGradient>
+  </defs>
+  <rect width="1800" height="1000" fill="#b9ad91"/>
+  <path d="M34 36h1732v910H34z" fill="#82775e" opacity=".25"/>
+  <path d="M54 44h1692v880H54z" fill="url(#floor)"/>
+  <path d="M96 250h1608v632H96z" fill="url(#tile)"/>
+  <path d="M54 44h1692v208H54z" fill="url(#wall)"/>
+  <path d="M54 230h1692v24H54z" fill="#8f7958"/><path d="M54 230h1692v8H54z" fill="#b49567"/>
+  <path d="M54 44h42v840H54zM1704 44h42v840h-42z" fill="#c8b58c"/>
+  <path d="M34 901h1732v32H34z" fill="#68725d"/><path d="M34 901h1732v8H34z" fill="#a5a17a"/>
+  <!-- Upper cupboards and open shelves in the same honey wood palette as the restaurant. -->
+  <path d="M147 68h382v140H147zM551 68h382v140H551zM955 68h382v140H955zM1359 68h294v140h-294z" fill="#79583c"/>
+  <path d="M157 77h362v119H157zM561 77h362v119H561zM965 77h362v119H965zM1369 77h274v119h-274z" fill="url(#wood)"/>
+  <path d="M336 77h12v119h-12zM740 77h12v119h-12zM1144 77h12v119h-12zM1500 77h12v119h-12z" fill="#76543a"/>
+  <path d="M172 93h144v5H172zM375 93h126v5H375zM576 93h145v5H576zM779 93h126v5H779zM980 93h145v5H980zM1183 93h126v5h-126z" fill="#e4b979" opacity=".7"/>
+  <path d="M185 115h86v7h-86zM202 122h52v53h-52zM390 115h82v7h-82zM407 122h48v53h-48z" fill="#f0d9a8"/>
+  <path d="M585 117h64v7h-64zM660 117h64v7h-64zM735 117h64v7h-64zM810 117h64v7h-64z" fill="#e7d9b9"/>
+  <path d="M589 125h56v44h-56zM664 125h56v44h-56zM739 125h56v44h-56zM814 125h56v44h-56z" fill="#859178"/>
+  <!-- Vent hood and backsplash -->
+  <path d="M753 218h294v22H753zM790 188h220v30H790zM820 162h160v26H820z" fill="#7e806c"/>
+  <path d="M807 194h186v15H807zM835 169h130v14H835z" fill="#c8c6aa"/>
+  <path d="M96 252h1608v184H96z" fill="#d9c9a5"/>
+  <path d="M120 267h1560v150H120z" fill="url(#tile)"/>
+  <!-- Long prep counter, sink, chopping board and jars. -->
+  <path d="M96 414h1608v32H96z" fill="#76563d"/><path d="M96 414h1608v12H96z" fill="#c4945e"/>
+  <path d="M119 446h1562v108H119z" fill="url(#sage)"/>
+  <path d="M119 446h1562v12H119z" fill="#c1c6a0"/>
+  <path d="M152 470h280v60H152z" fill="#725740"/><path d="M163 478h258v42H163z" fill="#b3c0a0"/>
+  <path d="M179 486h226v26H179z" fill="#e6e4d1"/><path d="M263 486h54v6h-54zM286 492v24" fill="none" stroke="#7b8a78" stroke-width="6"/>
+  <path d="M504 469h180v10H504zM517 479h154v44H517z" fill="#c38b55"/>
+  <path d="M740 470h54v54h-54zM807 470h54v54h-54zM874 470h54v54h-54z" fill="#f3e3bf" stroke="#80684b" stroke-width="5"/>
+  <path d="M748 482h38M815 482h38M882 482h38" stroke="#8f7350" stroke-width="4"/>
+  <path d="M1050 464h254v15h-254zM1070 479v45M1284 479v45" fill="#805c3d"/>
+  <path d="M1081 453h35v11h-35zM1124 453h35v11h-35zM1167 453h35v11h-35zM1210 453h35v11h-35z" fill="#d4b06e"/>
+  <path d="M1078 439h40v14h-40zM1121 439h40v14h-40zM1164 439h40v14h-40zM1207 439h40v14h-40z" fill="#839072"/>
+  <path d="M1390 465h220v15h-220zM1410 480v45M1590 480v45" fill="#8b6542"/>
+  <path d="M1420 445h52v20h-52zM1492 438h52v27h-52zM1564 448h30v17h-30z" fill="#c88651"/>
+  <path d="M96 879h1608v22H96z" fill="#8f805f"/><path d="M96 879h1608v8H96z" fill="#c6ae7d"/>
+  <path d="M54 933h1692v18H54z" fill="#d9ceb0"/>
+</svg>

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f6eed9" />
+    <meta name="description" content="Quản lý nhà hàng pixel art: mời khách, phục vụ món và phát triển danh tiếng." />
+    <title>Tiệm Nhỏ — Nhà hàng của bạn</title>
+    <link rel="stylesheet" href="./styles.css?v=47" />
+    <script src="./game.js?v=47" defer></script>
+  </head>
+  <body>
+    <main class="game-shell">
+      <div class="game-layout">
+        <section class="play-panel" aria-label="Khu vực nhà hàng">
+          <div class="room-frame">
+            <div class="room-scene" id="room-scene">
+              <div class="room-vignette" aria-hidden="true"></div>
+              <div class="door-glow" aria-hidden="true"></div>
+              <div class="entry-door" id="entry-door" aria-hidden="true">
+                <span class="entry-door__leaf entry-door__leaf--left"></span>
+                <span class="entry-door__leaf entry-door__leaf--right"></span>
+              </div>
+              <div class="scene-stats">
+                <div class="stat-pill reputation-pill">
+                  <span class="stat-icon" aria-hidden="true">★</span>
+                  <span class="stat-copy"><small>DANH VỌNG</small><strong id="reputation-value">100</strong></span>
+                </div>
+                <div class="stat-pill money-pill">
+                  <span class="stat-icon" aria-hidden="true">✧</span>
+                  <span class="stat-copy"><small>TIỀN</small><strong id="money-value">0</strong></span>
+                </div>
+              </div>
+              <button class="sound-button" id="sound-toggle" type="button" aria-pressed="true" aria-label="Tắt âm thanh">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4Z"/><path d="M17 9a5 5 0 0 1 0 6M19.5 6.5a9 9 0 0 1 0 11"/></svg>
+              </button>
+              <button class="map-toggle" id="map-toggle" type="button" aria-label="Vào bếp" aria-pressed="false">
+                <svg id="map-toggle-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9h16v11M7 9V5h10v4M7 13h3v3H7zM14 13h3v3h-3zM9 20v-3h6v3"/><path d="M10 5V3h4v2"/></svg>
+              </button>
+              <div class="table-layer" id="table-layer" aria-hidden="true"></div>
+              <div class="chair-layer" id="chair-layer" aria-hidden="true"></div>
+              <div class="kitchen-layer" id="kitchen-layer" aria-hidden="true"></div>
+              <div class="cooking-layer" id="cooking-layer" aria-hidden="true"></div>
+              <div class="food-counter kitchen-food-counter" id="kitchen-food-counter" aria-label="Quầy món đã nấu">
+                <img class="food-counter-art" src="./assets/kitchen-food-counter.svg" alt="" draggable="false" />
+                <div class="food-counter-slots" id="kitchen-food-slots" aria-live="polite"></div>
+              </div>
+              <div class="food-counter hall-food-counter" id="hall-food-counter" aria-label="Quầy món chờ giao">
+                <img class="food-counter-art" src="./assets/hall-food-counter.svg" alt="" draggable="false" />
+                <div class="food-counter-slots" id="hall-food-slots" aria-live="polite"></div>
+              </div>
+              <div class="waiting-queue" id="waiting-queue" role="list" aria-label="Khách đang chờ"></div>
+              <div class="guest-layer" id="guest-layer"></div>
+              <div class="order-layer" id="order-layer" aria-label="Order của khách"></div>
+
+              <div class="staff" id="staff" aria-hidden="true">
+                <img src="./assets/sprites/Idle_5/south.png" alt="" draggable="false" />
+                <span class="staff-carry" id="staff-carry" hidden><img src="" alt="" draggable="false" /></span>
+              </div>
+              <div class="chef" id="chef" data-sprite-folder="Idle" aria-hidden="true">
+                <img src="./assets/sprites/Idle/south.png" alt="" draggable="false" />
+                <span class="staff-carry" id="chef-carry" hidden><img src="" alt="" draggable="false" /></span>
+              </div>
+              <div class="payment-layer" id="payment-layer" aria-label="Tiền thanh toán theo từng bàn"></div>
+
+              <div class="entrance-caption"><span class="entrance-arrow">↓</span> CỬA VÀO</div>
+              <button class="menu-open-button" id="menu-open" type="button" aria-label="Mở thực đơn" aria-haspopup="dialog" aria-controls="menu-panel">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v7a3 3 0 0 0 6 0V4M7 4v16M16 4v16M16 4c3 2 4 6 0 8"/></svg><span>Thực đơn</span>
+              </button>
+              <div class="scene-actions">
+                <div class="invite-wrap">
+                  <span id="invite-success" class="invite-success" role="status" aria-label="Đã mời thành công một khách" aria-live="polite" hidden>✓</span>
+                  <button class="invite-button" id="invite-button" type="button" aria-label="Mời khách">
+                    <span class="invite-progress-wrap" aria-hidden="true"></span>
+                    <svg class="invite-phone-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M10 4h12a2 2 0 0 1 2 2v20a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="M13 8h6M14 24h4"/><path d="M22 10h5v5h-5z"/><path d="m23 12 1 1 2-2"/></svg>
+                    <span class="invite-percent" id="invite-percent">0%</span>
+                    <span class="sr-only">Mời khách</span>
+                  </button>
+                </div>
+                <button class="upgrade-open-button" id="upgrade-open" type="button" aria-label="Mở nâng cấp" aria-haspopup="dialog" aria-controls="upgrade-panel">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.5 5.2 5.7.8-4.1 4 .9 5.7-5-2.7-5 2.7.9-5.7-4.1-4 5.7-.8L12 3Z"/><path d="M19 3v4M17 5h4"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <dialog class="upgrade-panel" id="upgrade-panel" aria-label="Nâng cấp tiệm">
+          <div class="panel-heading panel-heading--minimal">
+            <button class="upgrade-close-button" id="upgrade-close" type="button" aria-label="Đóng nâng cấp">×</button>
+          </div>
+
+          <button class="upgrade-card" id="upgrade-chance" type="button">
+            <span class="upgrade-icon icon-door" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 21V4.5A2.5 2.5 0 0 1 7.5 2H19v19M3 21h18M15 11h.01"/></svg></span>
+            <span class="upgrade-content"><strong>Tỷ lệ khách đến</strong><small id="chance-detail">Tăng 5% tiến độ mỗi lần mời</small><span class="level-row" id="chance-level">Cấp 0 <span class="level-track"><i style="width:0%"></i></span></span></span>
+            <span class="upgrade-cost"><strong id="chance-cost">15</strong><small>xu</small></span>
+          </button>
+
+          <button class="upgrade-card" id="upgrade-reputation" type="button">
+            <span class="upgrade-icon icon-star" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg></span>
+            <span class="upgrade-content"><strong>Danh tiếng tiệm</strong><small id="reputation-detail">Tăng giá món ăn thêm 10%</small><span class="level-row" id="reputation-level">Cấp 1 <span class="level-track"><i style="width:10%"></i></span></span></span>
+            <span class="upgrade-cost"><strong id="reputation-cost">35</strong><small>xu</small></span>
+          </button>
+
+          <button class="upgrade-card" id="upgrade-queue" type="button">
+            <span class="upgrade-icon icon-queue" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="7" cy="7" r="3"/><circle cx="17" cy="7" r="3"/><path d="M2.5 19c.3-3 1.8-5 4.5-5s4.2 2 4.5 5M12.5 19c.3-3 1.8-5 4.5-5s4.2 2 4.5 5"/></svg></span>
+            <span class="upgrade-content"><strong>Chỗ trong hàng chờ</strong><small id="queue-detail">Tối đa 2 khách đang chờ</small><span class="level-row" id="queue-level">Cấp 0 · 2 chỗ</span></span>
+            <span class="upgrade-cost"><strong id="queue-cost">500</strong><small>xu</small></span>
+          </button>
+
+          <div class="save-status" id="save-status"><span class="save-check" aria-hidden="true">✓</span> Tiến độ được lưu tự động</div>
+      </dialog>
+      <dialog class="upgrade-panel menu-panel" id="menu-panel" aria-labelledby="menu-heading">
+        <div class="panel-heading"><h2 id="menu-heading">Thực đơn</h2><span class="upgrade-sparkle" aria-hidden="true">✦</span><button class="upgrade-close-button" id="menu-close" type="button" aria-label="Đóng thực đơn">×</button></div>
+        <div class="menu-card" id="menu-list"></div>
+      </dialog>
+    </main>
+  </body>
+</html>

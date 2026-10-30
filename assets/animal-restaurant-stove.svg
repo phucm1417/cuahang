@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240" shape-rendering="crispEdges">
+  <!-- A compact enamel range drawn with the restaurant table's warm outline and wood tones. -->
+  <path d="M43 197h234v10H43z" fill="#604b37" opacity=".22"/>
+  <path d="M58 148h204v49H58z" fill="#674a35"/>
+  <path d="M66 153h188v37H66z" fill="#839078"/>
+  <path d="M66 153h188v8H66z" fill="#b8bd99"/>
+  <path d="M80 166h160v19H80z" fill="#71533a"/>
+  <path d="M88 170h144v11H88z" fill="#c28b52"/>
+  <path d="M105 190h17v8h-17zM198 190h17v8h-17z" fill="#674a35"/>
+  <!-- Cast-iron cooktop -->
+  <path d="M53 61h214v91H53z" fill="#5d4938"/>
+  <path d="M61 66h198v78H61z" fill="#a7aa8c"/>
+  <path d="M61 66h198v8H61z" fill="#d5c89f"/>
+  <path d="M73 80h174v57H73z" fill="#777966"/>
+  <!-- Four burner rings -->
+  <path d="M87 87h53v8H87zM80 95h8v25h-8zM139 95h8v25h-8zM87 120h53v8H87z" fill="#51463a"/>
+  <path d="M96 96h35v22H96z" fill="#282e2b"/>
+  <path d="M164 87h53v8h-53zM157 95h8v25h-8zM216 95h8v25h-8zM164 120h53v8h-53z" fill="#51463a"/>
+  <path d="M173 96h35v22h-35z" fill="#282e2b"/>
+  <!-- A simmering pot adds a little life and an obvious cooking cue. -->
+  <path d="M98 76h34v8H98zM93 84h44v7H93z" fill="#d6c9a6"/>
+  <path d="M100 73h30v5h-30z" fill="#76674e"/>
+  <path d="M90 90h50v7H90z" fill="#e0d3b1"/>
+  <path d="M93 97h44v21h-44z" fill="#b8b49b"/>
+  <path d="M93 97h44v6h-44z" fill="#e1d4b4"/>
+  <path d="M84 101h9v7h-9zM137 101h9v7h-9z" fill="#8d8066"/>
+  <path d="M105 62h5v-9h5v9h5v-12h5v12h5v-8h5v8" fill="none" stroke="#f0bd63" stroke-width="5"/>
+  <!-- Warm oven door and knobs -->
+  <path d="M116 161h88v25h-88z" fill="#594636"/>
+  <path d="M123 166h74v14h-74z" fill="#d4d4bc"/>
+  <path d="M130 170h60v7h-60z" fill="#82907a"/>
+  <path d="M92 157h10v10H92zM218 157h10v10h-10z" fill="#ead7a5"/>
+  <path d="M94 159h6v6h-6zM220 159h6v6h-6z" fill="#705740"/>
+  <path d="M155 149h10v6h-10z" fill="#624a37"/>
+  <path d="M67 143h186v5H67z" fill="#e2d2aa"/>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240" shape-rendering="crispEdges">
+  <!-- Chair legs and frame -->
+  <path d="M113 21h10v-8h74v8h10v9h8v46h-8v9h-10v14h-10v-13h-58v13h-10V85h-10v-9h-8V30h8z" fill="#65452f"/>
+  <path d="M121 25h78v8h8v40h-8v8h-10v12h-9V81h-48v12h-9V81h-10v-8h-8V33h8z" fill="#a36e45"/>
+  <!-- Soft sage upholstery -->
+  <path d="M128 33h64v7h8v29h-8v7h-10v10h-52V76h-10v-7h-7V40h7v-7z" fill="#87936b"/>
+  <path d="M128 33h64v7h8v7h-79v-7h7z" fill="#a8b384"/>
+  <path d="M128 77h52v7h-52z" fill="#705039"/>
+</svg>
