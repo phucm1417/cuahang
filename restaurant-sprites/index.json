@@ -1,0 +1,206 @@
+[
+ {
+  "key": "com_trang",
+  "name": "Cơm trắng"
+ },
+ {
+  "key": "trung_op_la",
+  "name": "Trứng ốp la"
+ },
+ {
+  "key": "dau_hu_sot_ca",
+  "name": "Đậu hũ sốt cà"
+ },
+ {
+  "key": "canh_rau",
+  "name": "Canh rau"
+ },
+ {
+  "key": "dua_leo",
+  "name": "Dưa leo"
+ },
+ {
+  "key": "banh_bao",
+  "name": "Bánh bao"
+ },
+ {
+  "key": "banh_mi",
+  "name": "Bánh mì"
+ },
+ {
+  "key": "banh_xeo",
+  "name": "Bánh xèo"
+ },
+ {
+  "key": "pho_bo",
+  "name": "Phở bò"
+ },
+ {
+  "key": "che",
+  "name": "Chè"
+ },
+ {
+  "key": "ca_phe",
+  "name": "Cà phê sữa đá"
+ },
+ {
+  "key": "dua_hau",
+  "name": "Dưa hấu"
+ },
+ {
+  "key": "banh_flan",
+  "name": "Bánh flan"
+ },
+ {
+  "key": "xoi_xeo",
+  "name": "Xôi xéo"
+ },
+ {
+  "key": "xoi_gac",
+  "name": "Xôi gấc"
+ },
+ {
+  "key": "bun_bo_hue",
+  "name": "Bún bò Huế"
+ },
+ {
+  "key": "bun_rieu",
+  "name": "Bún riêu"
+ },
+ {
+  "key": "bun_cha",
+  "name": "Bún chả"
+ },
+ {
+  "key": "mi_quang",
+  "name": "Mì Quảng"
+ },
+ {
+  "key": "com_tam",
+  "name": "Cơm tấm"
+ },
+ {
+  "key": "goi_cuon",
+  "name": "Gỏi cuốn"
+ },
+ {
+  "key": "cha_gio",
+  "name": "Chả giò"
+ },
+ {
+  "key": "banh_cuon",
+  "name": "Bánh cuốn"
+ },
+ {
+  "key": "banh_canh",
+  "name": "Bánh canh"
+ },
+ {
+  "key": "hu_tieu",
+  "name": "Hủ tiếu"
+ },
+ {
+  "key": "lau",
+  "name": "Lẩu"
+ },
+ {
+  "key": "ca_kho",
+  "name": "Cá kho tộ"
+ },
+ {
+  "key": "thit_kho_trung",
+  "name": "Thịt kho trứng"
+ },
+ {
+  "key": "ga_nuong",
+  "name": "Gà nướng"
+ },
+ {
+  "key": "suon_nuong",
+  "name": "Sườn nướng"
+ },
+ {
+  "key": "bo_luc_lac",
+  "name": "Bò lúc lắc"
+ },
+ {
+  "key": "muc_xao",
+  "name": "Mực xào"
+ },
+ {
+  "key": "tom_rang",
+  "name": "Tôm rang"
+ },
+ {
+  "key": "ca_chien",
+  "name": "Cá chiên"
+ },
+ {
+  "key": "nem_nuong",
+  "name": "Nem nướng"
+ },
+ {
+  "key": "bo_bia",
+  "name": "Bò bía"
+ },
+ {
+  "key": "banh_trang_tron",
+  "name": "Bánh tráng trộn"
+ },
+ {
+  "key": "sinh_to_bo",
+  "name": "Sinh tố bơ"
+ },
+ {
+  "key": "sinh_to_xoai",
+  "name": "Sinh tố xoài"
+ },
+ {
+  "key": "nuoc_cam",
+  "name": "Nước cam"
+ },
+ {
+  "key": "tra_dao",
+  "name": "Trà đào"
+ },
+ {
+  "key": "tra_sua",
+  "name": "Trà sữa trân châu"
+ },
+ {
+  "key": "nuoc_dua",
+  "name": "Nước dừa"
+ },
+ {
+  "key": "sua_dau_nanh",
+  "name": "Sữa đậu nành"
+ },
+ {
+  "key": "bia",
+  "name": "Bia"
+ },
+ {
+  "key": "tra_da",
+  "name": "Trà đá"
+ },
+ {
+  "key": "kem_dua",
+  "name": "Kem dừa"
+ },
+ {
+  "key": "banh_da_lon",
+  "name": "Bánh da lợn"
+ },
+ {
+  "key": "banh_chuoi",
+  "name": "Bánh chuối"
+ },
+ {
+  "key": "khoai_lang",
+  "name": "Khoai lang"
+ },
+ {
+  "key": "bap_nuong",
+  "name": "Bắp nướng"
+ }
+]

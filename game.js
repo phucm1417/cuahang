@@ -69,6 +69,8 @@
   const lockedDishRequestChance = 0.1;
   const positiveMoodChance = 0.25;
   const positiveMoods = ["love", "happy", "joy"];
+  const hallFurnitureNames = ["quầy thu ngân", "hũ tiền tip", "bàn trà", "chậu cây bên trái", "chậu cây bên phải", "thảm sảnh", "cửa sổ sảnh"];
+  const kitchenFurnitureNames = ["cửa sổ bếp", "tủ bếp treo", "kệ nguyên liệu", "giá treo dụng cụ", "bàn sơ chế", "tủ lạnh", "thùng rác", "thảm chống trượt"];
   const negativeMoods = ["angry", "confused"];
   const emotionArt = {
     love: '<path d="M16 26C8 20 4 16 4 11.5 4 8 6.5 6 9.5 6c2.7 0 5.1 1.6 6.5 4 1.4-2.4 3.8-4 6.5-4 3 0 5.5 2 5.5 5.5C28 16 24 20 16 26Z" fill="#f4b3b0" stroke="#6b5636" stroke-width="2" stroke-linejoin="round"/><path d="M9 11q1.5-1.8 3.5-2" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round"/>',
@@ -82,6 +84,11 @@
     money: document.querySelector("#money-value"),
     reputation: document.querySelector("#reputation-value"),
     roomScene: document.querySelector("#room-scene"),
+    wallPropsLayer: document.querySelector("#wall-props-layer"),
+    floorPropsLayer: document.querySelector("#floor-props-layer"),
+    mapPlacementZones: document.querySelector("#map-placement-zones"),
+    wallPlacementZone: document.querySelector("#wall-placement-zone"),
+    floorPlacementZone: document.querySelector("#floor-placement-zone"),
     menuOpen: document.querySelector("#menu-open"),
     menuPanel: document.querySelector("#menu-panel"),
     menuClose: document.querySelector("#menu-close"),
@@ -105,6 +112,28 @@
     queueCost: document.querySelector("#queue-cost"),
     queueDetail: document.querySelector("#queue-detail"),
     queueLevel: document.querySelector("#queue-level"),
+    restaurantUpgrades: document.querySelector("#restaurant-upgrades"),
+    kitchenUpgrades: document.querySelector("#kitchen-upgrades"),
+    kitchenStoveUpgrade: document.querySelector("#upgrade-kitchen-stoves"),
+    kitchenStoveDetail: document.querySelector("#kitchen-stove-detail"),
+    kitchenStoveLevel: document.querySelector("#kitchen-stove-level"),
+    kitchenStoveCost: document.querySelector("#kitchen-stove-cost"),
+    kitchenCookUpgrade: document.querySelector("#upgrade-kitchen-cook"),
+    kitchenCookDetail: document.querySelector("#kitchen-cook-detail"),
+    kitchenCookLevel: document.querySelector("#kitchen-cook-level"),
+    kitchenCookCost: document.querySelector("#kitchen-cook-cost"),
+    kitchenChefUpgrade: document.querySelector("#upgrade-kitchen-chef"),
+    kitchenChefDetail: document.querySelector("#kitchen-chef-detail"),
+    kitchenChefLevel: document.querySelector("#kitchen-chef-level"),
+    kitchenChefCost: document.querySelector("#kitchen-chef-cost"),
+    hallInteriorUpgrade: document.querySelector("#upgrade-hall-interior"),
+    hallInteriorDetail: document.querySelector("#hall-interior-detail"),
+    hallInteriorLevel: document.querySelector("#hall-interior-level"),
+    hallInteriorCost: document.querySelector("#hall-interior-cost"),
+    kitchenInteriorUpgrade: document.querySelector("#upgrade-kitchen-interior"),
+    kitchenInteriorDetail: document.querySelector("#kitchen-interior-detail"),
+    kitchenInteriorLevel: document.querySelector("#kitchen-interior-level"),
+    kitchenInteriorCost: document.querySelector("#kitchen-interior-cost"),
     tableLayer: document.querySelector("#table-layer"),
     chairLayer: document.querySelector("#chair-layer"),
     kitchenLayer: document.querySelector("#kitchen-layer"),
@@ -125,6 +154,9 @@
     chefCarry: document.querySelector("#chef-carry"),
     sound: document.querySelector("#sound-toggle"),
     saveStatus: document.querySelector("#save-status"),
+    testMoneyAmount: document.querySelector("#test-money-amount"),
+    testAddMoney: document.querySelector("#test-add-money"),
+    testResetGame: document.querySelector("#test-reset-game"),
   };
 
   const state = {
@@ -133,6 +165,11 @@
     chanceLevel: 0,
     reputationLevel: 1,
     queueLevel: 0,
+    kitchenStoveLevel: 0,
+    kitchenCookLevel: 0,
+    kitchenChefSpeedLevel: 0,
+    hallInteriorLevel: 0,
+    kitchenInteriorLevel: 0,
     unlockedMenuCount: 1,
     inviteProgress: 0,
     guests: new Map(),
@@ -151,6 +188,7 @@
     pendingCoins: 0,
     tableSeats: [],
     occupiedTables: new Map(),
+    scenePropObstacles: [],
     layoutName: "desktop",
     mapMode: "restaurant",
     muted: false,
@@ -169,8 +207,8 @@
     destination: null,
   };
   const staffGrid = { step: 4, xs: [], ys: [], nodes: [] };
-  const STAFF_SPEED = 78;
-  const CHEF_SPEED_MULTIPLIER = 1.45;
+  const STAFF_SPEED = 92;
+  const CHEF_SPEED_MULTIPLIER = 1.7;
   const MONEY_PICKUP_SPEED_MULTIPLIER = 1.8;
   const chefMotion = { x: 82, y: 57, facing: "south" };
   let chefWanderPauseUntil = 0;
@@ -188,6 +226,11 @@
       state.chanceLevel = Math.min(maxChanceLevel, Math.max(0, Math.floor(Number(saved.chanceLevel) || 0)));
       state.reputationLevel = Math.min(maxReputationLevel, Math.max(1, Math.floor(Number(saved.reputationLevel) || 1)));
       state.queueLevel = Math.max(0, Math.floor(Number(saved.queueLevel) || 0));
+      state.kitchenStoveLevel = Math.min(5, Math.max(0, Math.floor(Number(saved.kitchenStoveLevel) || 0)));
+      state.kitchenCookLevel = Math.min(10, Math.max(0, Math.floor(Number(saved.kitchenCookLevel) || 0)));
+      state.kitchenChefSpeedLevel = Math.min(10, Math.max(0, Math.floor(Number(saved.kitchenChefSpeedLevel) || 0)));
+      state.hallInteriorLevel = Math.min(7, Math.max(0, Math.floor(Number(saved.hallInteriorLevel) || 0)));
+      state.kitchenInteriorLevel = Math.min(8, Math.max(0, Math.floor(Number(saved.kitchenInteriorLevel) || 0)));
       state.unlockedMenuCount = Math.min(menu.length, Math.max(1, Math.floor(Number(saved.unlockedMenuCount) || 1)));
     } catch {
       // The game remains playable when browser storage is unavailable or malformed.
@@ -202,6 +245,11 @@
         chanceLevel: state.chanceLevel,
         reputationLevel: state.reputationLevel,
         queueLevel: state.queueLevel,
+        kitchenStoveLevel: state.kitchenStoveLevel,
+        kitchenCookLevel: state.kitchenCookLevel,
+        kitchenChefSpeedLevel: state.kitchenChefSpeedLevel,
+        hallInteriorLevel: state.hallInteriorLevel,
+        kitchenInteriorLevel: state.kitchenInteriorLevel,
         unlockedMenuCount: state.unlockedMenuCount,
       }));
       el.saveStatus.innerHTML = '<span class="save-check" aria-hidden="true">✓</span> Tiến độ được lưu tự động';
@@ -217,8 +265,17 @@
   function chanceCost() { return 15 + state.chanceLevel * 20; }
   function reputationCost() { return 35 + (state.reputationLevel - 1) * 45; }
   function queueCost() { return 500 * 2 ** state.queueLevel; }
+  function kitchenStoveCost() { return 400 * 2 ** state.kitchenStoveLevel; }
+  function kitchenCookCost() { return 300 * 2 ** state.kitchenCookLevel; }
+  function kitchenChefCost() { return 350 * 2 ** state.kitchenChefSpeedLevel; }
+  function interiorCost(level) { return 500 * 2 ** level; }
+  function kitchenStoveCount() { return 1 + state.kitchenStoveLevel; }
+  function kitchenCookDuration() { return Math.max(550, Math.round(1450 * 0.88 ** state.kitchenCookLevel)); }
   function chancePerTap() { return Math.min(50, baseChancePerTap + state.chanceLevel * 5); }
-  function priceMultiplier() { return 1 + (state.reputationLevel - 1) * 0.1; }
+  function priceMultiplier() {
+    return 1 + (state.reputationLevel - 1) * 0.1
+      + (state.hallInteriorLevel + state.kitchenInteriorLevel) * 0.05;
+  }
   function menuUnlockCost(index) { return Math.ceil((menuUnlockBaseCost * menuUnlockGrowth ** (index - 1)) / 5) * 5; }
   function menuBaseSalePrice(index) {
     if (index <= 0) return menu[0].price;
@@ -306,11 +363,46 @@
     document.body.classList.toggle("panel-menu-open", menuOpen);
     document.body.classList.toggle("panel-upgrade-open", upgradesOpen);
     document.body.classList.toggle("panel-both-open", menuOpen && upgradesOpen);
+    el.mapPlacementZones.hidden = !upgradesOpen;
+  }
+
+  function getMapGeometry() {
+    const kitchen = state.mapMode === "kitchen";
+    if (state.layoutName === "portrait") {
+      return kitchen
+        ? { width: 720, height: 1600, wall: { x: 42, y: 42, width: 636, height: 378 }, floor: { x: 42, y: 420, width: 636, height: 1124 } }
+        : { width: 720, height: 1600, wall: { x: 42, y: 42, width: 636, height: 344 }, floor: { x: 42, y: 386, width: 636, height: 1158 } };
+    }
+    if (state.layoutName === "mobile") {
+      return kitchen
+        ? { width: 1024, height: 1024, wall: { x: 42, y: 30, width: 940, height: 230 }, floor: { x: 42, y: 260, width: 940, height: 710 } }
+        : { width: 1024, height: 1024, wall: { x: 42, y: 30, width: 940, height: 215 }, floor: { x: 42, y: 245, width: 940, height: 725 } };
+    }
+    return kitchen
+      ? { width: 1800, height: 1000, wall: { x: 54, y: 44, width: 1692, height: 208 }, floor: { x: 96, y: 250, width: 1608, height: 632 } }
+      : { width: 1800, height: 1000, wall: { x: 54, y: 44, width: 1692, height: 206 }, floor: { x: 96, y: 247, width: 1608, height: 632 } };
+  }
+
+  function placementZoneStyle(element, region, geometry) {
+    element.style.left = `${region.x / geometry.width * 100}%`;
+    element.style.top = `${region.y / geometry.height * 100}%`;
+    element.style.width = `${region.width / geometry.width * 100}%`;
+    element.style.height = `${region.height / geometry.height * 100}%`;
+  }
+
+  function renderPlacementZones(geometry) {
+    placementZoneStyle(el.wallPlacementZone, geometry.wall, geometry);
+    placementZoneStyle(el.floorPlacementZone, geometry.floor, geometry);
   }
 
   function renderMapMode() {
     const inKitchen = state.mapMode === "kitchen";
     el.roomScene.classList.toggle("is-kitchen", inKitchen);
+    renderPlacementZones(getMapGeometry());
+    renderSceneProps();
+    rebuildStaffGrid();
+    el.restaurantUpgrades.hidden = inKitchen;
+    el.kitchenUpgrades.hidden = !inKitchen;
     el.staff.querySelector("img").src = spriteUrl("Idle_5", staffMotion.facing);
     el.chef.querySelector("img").src = spriteUrl("Idle", chefMotion.facing);
     el.chef.classList.add("is-visible");
@@ -319,6 +411,88 @@
     el.mapToggleIcon.innerHTML = inKitchen
       ? '<path d="M3 20V10l9-7 9 7v10h-6v-6H9v6z"/><path d="M2 10h20M5 12h2m10 0h2"/>'
       : '<path d="M3 11h18v2a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3zM6 16v3m12-3v3M7 8l-1-2m6 2V4m6 4 1-2"/><path d="M5 20h14"/>';
+    if (el.upgradePanel.open) syncPanelLayout();
+  }
+
+  function renderSceneProps() {
+    if (!el.wallPropsLayer || !el.floorPropsLayer) return;
+    const portrait = state.layoutName === "portrait";
+    const mobile = state.layoutName === "mobile";
+    const tableWidth = mobile ? 0.32 : 0.21;
+    const hallDesk = {
+      x: portrait ? 0.17 : mobile ? 0.17 : 0.15,
+      y: portrait ? 0.35 : mobile ? 0.46 : 0.52,
+      width: tableWidth * 0.65,
+      aspect: 1.5,
+    };
+    const deskHeight = hallDesk.width * (el.roomScene.clientWidth / Math.max(1, el.roomScene.clientHeight)) / hallDesk.aspect;
+    const hallProps = [
+      { asset: "hall-service-desk", name: "Quầy thu ngân", surface: "floor", x: hallDesk.x, y: hallDesk.y, width: hallDesk.width, aspect: hallDesk.aspect, anchor: "bottom", blocks: true },
+      { asset: "tip-jar", name: "Hũ tiền tip", surface: "floor", x: hallDesk.x, y: hallDesk.y - deskHeight * (1 - 0.2875), width: tableWidth * 0.22, aspect: 0.8, anchor: "bottom" },
+      { asset: "tea-table", name: "Bàn trà", surface: "floor", x: portrait ? 0.84 : mobile ? 0.86 : 0.88, y: portrait ? 0.35 : mobile ? 0.46 : 0.52, width: tableWidth * 0.60, aspect: 1.6, anchor: "bottom", blocks: true },
+      { asset: "entry-planter", name: "Chậu cây cửa vào", surface: "floor", x: portrait ? 0.38 : 0.36, y: portrait ? 0.34 : mobile ? 0.46 : 0.52, width: tableWidth * 0.45, aspect: 1.15, anchor: "bottom", blocks: true },
+      { asset: "entry-planter", name: "Chậu cây cửa vào", surface: "floor", x: portrait ? 0.62 : 0.64, y: portrait ? 0.34 : mobile ? 0.46 : 0.52, width: tableWidth * 0.45, aspect: 1.15, anchor: "bottom", blocks: true, flip: true },
+      { asset: "foyer-rug", name: "Thảm sảnh", surface: "floor", x: 0.5, y: portrait ? 0.82 : mobile ? 0.86 : 0.86, width: tableWidth * 1.10, aspect: 1.75, anchor: "bottom" },
+      { asset: "wall-window", name: "Cửa sổ sảnh", surface: "wall", x: 0.16, y: portrait ? 0.12 : 0.123, width: tableWidth * 0.55, aspect: 1.33, anchor: "center" },
+    ];
+    const kitchenProps = [
+      { asset: "kitchen-window", name: "Cửa sổ bếp", surface: "wall", x: 0.16, y: portrait ? 0.13 : 0.145, width: tableWidth * 0.52, aspect: 1, anchor: "center" },
+      { asset: "kitchen-wall-cabinet", name: "Tủ bếp treo", surface: "wall", x: 0.52, y: portrait ? 0.14 : 0.145, width: tableWidth * 0.55, aspect: 1.17, anchor: "center" },
+      { asset: "kitchen-ingredient-shelf", name: "Kệ nguyên liệu", surface: "wall", x: 0.82, y: 0.14, width: tableWidth * 0.42, aspect: 1.08, anchor: "center" },
+      { asset: "kitchen-hanging-rack", name: "Giá treo đồ bếp", surface: "wall", x: 0.30, y: portrait ? 0.21 : mobile ? 0.185 : 0.176, width: tableWidth * 0.40, aspect: 1.15, anchor: "center" },
+      { asset: "kitchen-prep-sink", name: "Bàn sơ chế", surface: "floor", x: 0.50, y: portrait ? 0.35 : mobile ? 0.40 : 0.40, width: tableWidth * 0.68, aspect: 1.77, anchor: "bottom", blocks: true },
+      { asset: "kitchen-refrigerator", name: "Tủ lạnh", surface: "floor", x: portrait ? 0.145 : mobile ? 0.13 : 0.12, y: portrait ? 0.87 : mobile ? 0.90 : 0.85, width: tableWidth * 0.50, aspect: 0.73, anchor: "bottom", blocks: true },
+      { asset: "kitchen-waste-bin", name: "Thùng rác", surface: "floor", x: portrait ? 0.87 : 0.90, y: portrait ? 0.87 : mobile ? 0.90 : 0.85, width: tableWidth * 0.36, aspect: 0.8, anchor: "bottom", blocks: true },
+      { asset: "foyer-rug", name: "Thảm chống trượt", surface: "floor", x: 0.5, y: portrait ? 0.83 : mobile ? 0.90 : 0.85, width: tableWidth * 0.88, aspect: 1.75, anchor: "bottom" },
+    ];
+    const geometry = getMapGeometry();
+    const isKitchen = state.mapMode === "kitchen";
+    const props = isKitchen ? kitchenProps.slice(0, state.kitchenInteriorLevel) : hallProps.slice(0, state.hallInteriorLevel);
+    const wallElements = [];
+    const floorElements = [];
+    state.scenePropObstacles = [];
+    props.forEach((prop) => {
+      const zone = geometry[prop.surface];
+      const widthInMap = prop.width * geometry.width;
+      const heightInMap = widthInMap / prop.aspect;
+      const centerX = prop.x * geometry.width;
+      const anchorY = prop.y * geometry.height;
+      const fitsAcrossMap = centerX - widthInMap / 2 >= zone.x
+        && centerX + widthInMap / 2 <= zone.x + zone.width;
+      const fitsOnSurface = prop.surface === "wall"
+        ? anchorY - heightInMap / 2 >= zone.y && anchorY + heightInMap / 2 <= zone.y + zone.height
+        : anchorY >= zone.y && anchorY <= zone.y + zone.height;
+      if (!fitsAcrossMap || !fitsOnSurface) return;
+      const element = document.createElement("div");
+      element.className = `scene-prop scene-prop--${prop.surface}${prop.anchor === "bottom" ? " is-floor-anchored" : ""}`;
+      element.setAttribute("aria-label", prop.name);
+      element.classList.toggle("scene-prop--rug", prop.asset === "foyer-rug");
+      const widthPercent = prop.width * 100;
+      const heightPercent = widthPercent * (el.roomScene.clientWidth / Math.max(1, el.roomScene.clientHeight)) / prop.aspect;
+      element.style.left = `${prop.x * 100}%`;
+      element.style.top = `${prop.y * 100}%`;
+      element.style.width = `${widthPercent}%`;
+      element.style.height = `${heightPercent}%`;
+      const image = document.createElement("img");
+      image.src = `./assets/scene-props/${prop.asset}.svg`;
+      image.alt = "";
+      image.draggable = false;
+      if (prop.flip) image.style.transform = "scaleX(-1)";
+      element.append(image);
+      (prop.surface === "wall" ? wallElements : floorElements).push(element);
+      if (prop.blocks) {
+        const top = prop.anchor === "bottom" ? prop.y * 100 - heightPercent : prop.y * 100 - heightPercent / 2;
+        state.scenePropObstacles.push({
+          left: prop.x * 100 - widthPercent / 2 - 1,
+          right: prop.x * 100 + widthPercent / 2 + 1,
+          top: top - 1,
+          bottom: prop.anchor === "bottom" ? prop.y * 100 + 1 : top + heightPercent + 1,
+        });
+      }
+    });
+    el.wallPropsLayer.replaceChildren(...wallElements);
+    el.floorPropsLayer.replaceChildren(...floorElements);
+    renderPlacementZones(geometry);
   }
 
   function render() {
@@ -344,6 +518,34 @@
     el.queueLevel.textContent = `Cấp ${state.queueLevel} · ${waitingQueueLimit()} chỗ`;
     el.queueCost.textContent = coins(queueCost());
     el.queueUpgrade.disabled = state.money < queueCost();
+    el.kitchenStoveDetail.textContent = kitchenStoveCount() >= 6 ? "Đã mở đủ 6 vị trí nấu" : "Mở thêm một vị trí nấu";
+    el.kitchenStoveLevel.textContent = `${kitchenStoveCount()} / 6 bếp`;
+    el.kitchenStoveCost.textContent = kitchenStoveCount() >= 6 ? "MAX" : coins(kitchenStoveCost());
+    el.kitchenStoveUpgrade.disabled = kitchenStoveCount() >= 6 || state.money < kitchenStoveCost();
+    el.kitchenCookDetail.textContent = state.kitchenCookLevel >= 10 ? "Đã đạt tốc độ nấu tối đa" : `Thời gian nấu còn ${Number((kitchenCookDuration() / 1000).toFixed(1))} giây`;
+    el.kitchenCookLevel.textContent = `Cấp ${state.kitchenCookLevel} / 10`;
+    el.kitchenCookCost.textContent = state.kitchenCookLevel >= 10 ? "MAX" : coins(kitchenCookCost());
+    el.kitchenCookUpgrade.disabled = state.kitchenCookLevel >= 10 || state.money < kitchenCookCost();
+    el.kitchenChefDetail.textContent = state.kitchenChefSpeedLevel >= 10 ? "Đã đạt tốc độ tối đa" : `Tăng ${Math.round((state.kitchenChefSpeedLevel + 1) * 12)}% tốc độ di chuyển`;
+    el.kitchenChefLevel.textContent = `Cấp ${state.kitchenChefSpeedLevel} / 10`;
+    el.kitchenChefCost.textContent = state.kitchenChefSpeedLevel >= 10 ? "MAX" : coins(kitchenChefCost());
+    el.kitchenChefUpgrade.disabled = state.kitchenChefSpeedLevel >= 10 || state.money < kitchenChefCost();
+    const hallNextFurniture = hallFurnitureNames[state.hallInteriorLevel];
+    const hallInteriorBonus = state.hallInteriorLevel * 5;
+    el.hallInteriorDetail.textContent = hallNextFurniture
+      ? `Mở ${hallNextFurniture} · +5% giá bán`
+      : "Đã mở toàn bộ nội thất sảnh";
+    el.hallInteriorLevel.textContent = `${state.hallInteriorLevel} / ${hallFurnitureNames.length} · +${hallInteriorBonus}%`;
+    el.hallInteriorCost.textContent = hallNextFurniture ? coins(interiorCost(state.hallInteriorLevel)) : "MAX";
+    el.hallInteriorUpgrade.disabled = !hallNextFurniture || state.money < interiorCost(state.hallInteriorLevel);
+    const kitchenNextFurniture = kitchenFurnitureNames[state.kitchenInteriorLevel];
+    const kitchenInteriorBonus = state.kitchenInteriorLevel * 5;
+    el.kitchenInteriorDetail.textContent = kitchenNextFurniture
+      ? `Mở ${kitchenNextFurniture} · +5% giá bán`
+      : "Đã mở toàn bộ nội thất bếp";
+    el.kitchenInteriorLevel.textContent = `${state.kitchenInteriorLevel} / ${kitchenFurnitureNames.length} · +${kitchenInteriorBonus}%`;
+    el.kitchenInteriorCost.textContent = kitchenNextFurniture ? coins(interiorCost(state.kitchenInteriorLevel)) : "MAX";
+    el.kitchenInteriorUpgrade.disabled = !kitchenNextFurniture || state.money < interiorCost(state.kitchenInteriorLevel);
     renderMenu();
     el.invite.disabled = state.guests.size + state.waitingQueue.length >= guestCapacity();
     el.invite.setAttribute("aria-label", el.invite.disabled
@@ -353,15 +555,17 @@
   }
 
   function getLayoutName() {
-    return window.matchMedia("(max-width: 600px)").matches ? "mobile" : "desktop";
+    if (!window.matchMedia("(max-width: 600px)").matches) return "desktop";
+    return window.matchMedia("(orientation: portrait)").matches ? "portrait" : "mobile";
   }
 
   function getSeatLayout(name) {
-    const mobile = name === "mobile";
+    const portrait = name === "portrait";
+    const mobile = name !== "desktop";
     const columns = mobile ? [7, 61] : [12, 40, 68];
-    const rows = mobile ? [25, 45, 65] : [35, 61];
+    const rows = portrait ? [37, 50, 63] : mobile ? [25, 45, 65] : [35, 61];
     const width = mobile ? 32 : 21;
-    const height = mobile ? 22 : 24;
+    const height = portrait ? 10.5 : mobile ? 22 : 24;
     const seats = [];
     rows.forEach((top) => columns.forEach((left) => {
       // Match the single centered chair in the table sprite on every layout.
@@ -388,7 +592,7 @@
     el.staff.style.setProperty("--serve-target-x", `${seat.serveX}%`);
     el.staff.style.setProperty("--serve-target-y", `${seat.serveY}%`);
     const actionLeft = seat.seatX;
-    const actionTop = seat.seatY - (state.layoutName === "mobile" ? 14 : 12);
+    const actionTop = seat.seatY - (state.layoutName !== "desktop" ? 14 : 12);
     guest.dom.orderAction.style.left = `${actionLeft}%`;
     guest.dom.orderAction.style.top = `${actionTop}%`;
     guest.dom.dish.style.left = `${seat.left + seat.width * 0.5}%`;
@@ -407,9 +611,9 @@
     state.waitingQueue.forEach((guest, index) => {
       let marker = state.queueMarkers.get(guest.id);
       const target = {
-        x: (state.layoutName === "mobile" ? 61 : 68)
-          + index * (state.layoutName === "mobile" ? 14 : 9),
-        y: state.layoutName === "mobile" ? 14 : 16,
+        x: (state.layoutName === "portrait" ? 67 : state.layoutName === "mobile" ? 61 : 68)
+          + index * (state.layoutName === "portrait" ? 13 : state.layoutName === "mobile" ? 14 : 9),
+        y: state.layoutName === "portrait" ? 10 : state.layoutName === "mobile" ? 14 : 16,
       };
       if (!marker) {
         marker = document.createElement("div");
@@ -417,8 +621,8 @@
         marker.dataset.spriteFolder = guest.spriteFolder;
         marker.setAttribute("role", "listitem");
         marker.setAttribute("aria-label", `Khách đang chờ số ${index + 1}`);
-        marker.style.left = "50%";
-        marker.style.top = "13%";
+        marker.style.left = `${state.layoutName === "portrait" ? 67 : 50}%`;
+        marker.style.top = `${state.layoutName === "portrait" ? 10 : 13}%`;
         const image = document.createElement("img");
         image.src = spriteUrl(guest.spriteFolder, directionBetween({ x: 50, y: 13 }, target));
         image.alt = "";
@@ -426,7 +630,8 @@
         marker.append(image);
         state.queueMarkers.set(guest.id, marker);
         el.waitingQueue.append(marker);
-        moveCharacter(marker, image, { x: 50, y: 13 }, target, "west", null, "enter");
+        const start = { x: 50, y: 13 };
+        moveCharacter(marker, image, start, target, "west", null, "enter");
       } else {
         const previousX = parseFloat(marker.style.left);
         const previousY = parseFloat(marker.style.top);
@@ -633,7 +838,7 @@
     guest.dom.dish.setAttribute("aria-label", guest.dish.name);
     guest.dom.dish.classList.add("is-visible");
     chime("serve");
-    schedule(() => finishMeal(guest), 2000);
+    schedule(() => finishMeal(guest), 1600);
   }
 
   function removeFromDiningCounter(guest) {
@@ -791,8 +996,10 @@
       table.style.top = `${position.top}%`;
       table.style.width = `${position.width}%`;
       table.style.height = `${position.height}%`;
-      table.style.display = index < unlockedTableCount() ? "block" : "none";
+      const visibleCount = layer === el.kitchenLayer ? kitchenStoveCount() : unlockedTableCount();
+      table.style.display = index < visibleCount ? "block" : "none";
     }));
+    renderSceneProps();
     rebuildStaffGrid();
     if (staffMotion.destination) moveStaffTo(staffMotion.destination, staffMotion.mode, staffMotion.onArrive);
     state.guests.forEach(applyGuestPosition);
@@ -1023,12 +1230,14 @@
   }
 
   function staffPointIsClear(x, y) {
-    if (x < 4 || x > 96 || y < 25 || y > 95) return false;
+    if (x < 4 || x > 96 || y < 30 || y > 95) return false;
     const overlapsTable = state.tableSeats.some((seat, index) => index < unlockedTableCount()
       && x >= seat.left - 2.2 && x <= seat.left + seat.width + 2.2
       && y >= seat.top - 2.5 && y <= seat.top + seat.height + 2.5);
     if (overlapsTable) return false;
-    const counterZones = state.layoutName === "mobile"
+    const counterZones = state.layoutName === "portrait"
+      ? [{ left: 36, right: 64, top: 73, bottom: 89 }]
+      : state.layoutName === "mobile"
       ? [
         { left: 0, right: 27, top: 48, bottom: 67 },
         { left: 73, right: 100, top: 48, bottom: 67 },
@@ -1037,12 +1246,13 @@
         { left: 0, right: 14, top: 49, bottom: 68 },
         { left: 86, right: 100, top: 49, bottom: 68 },
       ];
-    return !counterZones.some((zone) => x >= zone.left && x <= zone.right && y >= zone.top && y <= zone.bottom);
+    const insideFurniture = state.scenePropObstacles.some((zone) => x >= zone.left && x <= zone.right && y >= zone.top && y <= zone.bottom);
+    return !insideFurniture && !counterZones.some((zone) => x >= zone.left && x <= zone.right && y >= zone.top && y <= zone.bottom);
   }
 
   function rebuildStaffGrid() {
     staffGrid.xs = Array.from({ length: 24 }, (_, index) => 4 + index * staffGrid.step);
-    staffGrid.ys = Array.from({ length: 18 }, (_, index) => 25 + index * staffGrid.step);
+    staffGrid.ys = Array.from({ length: 18 }, (_, index) => 30 + index * staffGrid.step);
     staffGrid.nodes = [];
     staffGrid.ys.forEach((y, row) => staffGrid.xs.forEach((x, col) => {
       if (staffPointIsClear(x, y)) staffGrid.nodes.push({ x, y, col, row });
@@ -1394,7 +1604,7 @@
           guest.dom.orderAction.setAttribute("aria-label", `Khách gọi ${guest.dish.name}. Nhấn để nhân viên nhận order.`);
           guest.dom.orderAction.hidden = false;
           setOrderButtons();
-        }, 850);
+        }, 650);
     };
     if (guest.fromQueue) {
       const doorway = { x: 50, y: 13 };
@@ -1415,7 +1625,7 @@
       const marker = state.queueMarkers.get(guest.id);
       guest.queuePosition = marker
         ? { x: parseFloat(marker.style.left), y: parseFloat(marker.style.top) }
-        : { x: state.layoutName === "mobile" ? 61 : 68, y: state.layoutName === "mobile" ? 14 : 16 };
+        : { x: state.layoutName === "portrait" ? 67 : state.layoutName === "mobile" ? 61 : 68, y: state.layoutName === "portrait" ? 10 : state.layoutName === "mobile" ? 14 : 16 };
       guest.fromQueue = true;
       seatGuest(guest, tableIndex);
       tableIndex = findFreeTable();
@@ -1521,7 +1731,7 @@
     guest.phase = "waiter-picking-up";
     renderFoodCounters();
     state.servingGuest = guest;
-    const pass = state.layoutName === "mobile" ? { x: 30, y: 90 } : { x: 82, y: 90 };
+    const pass = state.layoutName === "portrait" ? { x: 50, y: 72 } : state.layoutName === "mobile" ? { x: 30, y: 90 } : { x: 82, y: 90 };
     const servingSide = guest.seat.seatX < 50 ? 1 : -1;
     const table = {
       x: guest.seat.left + (servingSide > 0 ? guest.seat.width + 3.5 : -3.5),
@@ -1578,7 +1788,7 @@
         setChefPosition(destination.x, destination.y);
         if (index + 1 < path.length) walkSegment(index + 1, destination);
         else if (onArrive) onArrive();
-      }, "none", CHEF_SPEED_MULTIPLIER);
+      }, "none", CHEF_SPEED_MULTIPLIER * (1 + state.kitchenChefSpeedLevel * 0.12));
     };
     walkSegment(0, from);
   }
@@ -1606,9 +1816,10 @@
       }
       schedule(() => {
         el.chefCarry.hidden = true;
+        const stoveSeat = state.tableSeats[guest.tableIndex % kitchenStoveCount()] || state.tableSeats[0];
         const stove = {
-          x: guest.seat.left + guest.seat.width * 0.5,
-          y: guest.seat.top + guest.seat.height * 0.48,
+          x: stoveSeat.left + stoveSeat.width * 0.5,
+          y: stoveSeat.top + stoveSeat.height * 0.48,
         };
         guest.phase = "chef-to-stove";
         chefMoveTo(stove, () => {
@@ -1640,7 +1851,7 @@
             }
             setChefCarry(guest.dish.sprite);
             guest.phase = "chef-to-pass";
-            const kitchenPass = state.layoutName === "mobile" ? { x: 30, y: 90 } : { x: 19, y: 90 };
+            const kitchenPass = state.layoutName === "portrait" ? { x: 50, y: 72 } : state.layoutName === "mobile" ? { x: 30, y: 90 } : { x: 19, y: 90 };
             chefMoveTo(kitchenPass, () => {
               if (!state.guests.has(guest.id) || guest.phase !== "chef-to-pass") {
                 el.chef.classList.remove("is-placing-food");
@@ -1652,7 +1863,7 @@
               el.chef.classList.add("is-placing-food");
               schedule(() => placeDishOnKitchenCounter(guest), 250);
             });
-          }, 1800);
+          }, kitchenCookDuration());
         });
       }, 300);
     });
@@ -1782,6 +1993,38 @@
     saveProgress();
   }
 
+  function purchaseKitchenUpgrade(key) {
+    const levels = {
+      stoves: { field: "kitchenStoveLevel", cost: kitchenStoveCost, max: 5 },
+      cooking: { field: "kitchenCookLevel", cost: kitchenCookCost, max: 10 },
+      chef: { field: "kitchenChefSpeedLevel", cost: kitchenChefCost, max: 10 },
+    };
+    const upgrade = levels[key];
+    const cost = upgrade.cost();
+    if (state[upgrade.field] >= upgrade.max || state.money < cost) return;
+    state.money -= cost;
+    state[upgrade.field] += 1;
+    chime("upgrade");
+    if (key === "stoves") arrangeTables();
+    render();
+    saveProgress();
+  }
+
+  function purchaseInteriorUpgrade(area) {
+    const field = area === "kitchen" ? "kitchenInteriorLevel" : "hallInteriorLevel";
+    const catalog = area === "kitchen" ? kitchenFurnitureNames : hallFurnitureNames;
+    const level = state[field];
+    const cost = interiorCost(level);
+    if (level >= catalog.length || state.money < cost) return;
+    state.money -= cost;
+    state[field] += 1;
+    chime("upgrade");
+    renderSceneProps();
+    rebuildStaffGrid();
+    render();
+    saveProgress();
+  }
+
   el.invite.addEventListener("click", inviteGuest);
   el.upgradeOpen.addEventListener("click", () => {
     chime("click");
@@ -1808,6 +2051,27 @@
   el.chanceUpgrade.addEventListener("click", purchaseChanceUpgrade);
   el.reputationUpgrade.addEventListener("click", purchaseReputationUpgrade);
   el.queueUpgrade.addEventListener("click", purchaseQueueUpgrade);
+  el.kitchenStoveUpgrade.addEventListener("click", () => purchaseKitchenUpgrade("stoves"));
+  el.kitchenCookUpgrade.addEventListener("click", () => purchaseKitchenUpgrade("cooking"));
+  el.kitchenChefUpgrade.addEventListener("click", () => purchaseKitchenUpgrade("chef"));
+  el.hallInteriorUpgrade.addEventListener("click", () => purchaseInteriorUpgrade("hall"));
+  el.kitchenInteriorUpgrade.addEventListener("click", () => purchaseInteriorUpgrade("kitchen"));
+  el.testAddMoney.addEventListener("click", () => {
+    const amount = Math.floor(Number(el.testMoneyAmount.value));
+    if (!Number.isFinite(amount) || amount < 1 || amount > 1_000_000_000) return;
+    state.money += amount;
+    chime("upgrade");
+    render();
+    saveProgress();
+  });
+  el.testResetGame.addEventListener("click", () => {
+    if (!window.confirm("Tạo mới màn chơi và xóa tiến độ đã lưu?")) return;
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } finally {
+      window.location.reload();
+    }
+  });
   el.sound.addEventListener("click", () => {
     state.muted = !state.muted;
     el.sound.setAttribute("aria-pressed", String(!state.muted));

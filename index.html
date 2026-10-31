@@ -6,8 +6,8 @@
     <meta name="theme-color" content="#f6eed9" />
     <meta name="description" content="Quản lý nhà hàng pixel art: mời khách, phục vụ món và phát triển danh tiếng." />
     <title>Tiệm Nhỏ — Nhà hàng của bạn</title>
-    <link rel="stylesheet" href="./styles.css?v=47" />
-    <script src="./game.js?v=47" defer></script>
+    <link rel="stylesheet" href="./styles.css?v=52" />
+    <script src="./game.js?v=52" defer></script>
   </head>
   <body>
     <main class="game-shell">
@@ -16,6 +16,12 @@
           <div class="room-frame">
             <div class="room-scene" id="room-scene">
               <div class="room-vignette" aria-hidden="true"></div>
+              <div class="map-placement-zones" id="map-placement-zones" aria-hidden="true" hidden>
+                <div class="map-placement-zone map-placement-zone--wall" id="wall-placement-zone"></div>
+                <div class="map-placement-zone map-placement-zone--floor" id="floor-placement-zone"></div>
+              </div>
+              <div class="scene-props-layer scene-props-layer--wall" id="wall-props-layer" aria-hidden="true"></div>
+              <div class="scene-props-layer scene-props-layer--floor" id="floor-props-layer" aria-hidden="true"></div>
               <div class="door-glow" aria-hidden="true"></div>
               <div class="entry-door" id="entry-door" aria-hidden="true">
                 <span class="entry-door__leaf entry-door__leaf--left"></span>
@@ -90,7 +96,7 @@
           <div class="panel-heading panel-heading--minimal">
             <button class="upgrade-close-button" id="upgrade-close" type="button" aria-label="Đóng nâng cấp">×</button>
           </div>
-
+          <div id="restaurant-upgrades">
           <button class="upgrade-card" id="upgrade-chance" type="button">
             <span class="upgrade-icon icon-door" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 21V4.5A2.5 2.5 0 0 1 7.5 2H19v19M3 21h18M15 11h.01"/></svg></span>
             <span class="upgrade-content"><strong>Tỷ lệ khách đến</strong><small id="chance-detail">Tăng 5% tiến độ mỗi lần mời</small><span class="level-row" id="chance-level">Cấp 0 <span class="level-track"><i style="width:0%"></i></span></span></span>
@@ -108,8 +114,45 @@
             <span class="upgrade-content"><strong>Chỗ trong hàng chờ</strong><small id="queue-detail">Tối đa 2 khách đang chờ</small><span class="level-row" id="queue-level">Cấp 0 · 2 chỗ</span></span>
             <span class="upgrade-cost"><strong id="queue-cost">500</strong><small>xu</small></span>
           </button>
+          <button class="upgrade-card interior-upgrade-card" id="upgrade-hall-interior" type="button" aria-label="Nâng cấp nội thất sảnh">
+            <span class="upgrade-icon icon-queue" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 20h18M5 20V8h14v12M8 8V5h8v3M8 12h3v3H8zm6 0h3v3h-3z"/></svg></span>
+            <span class="upgrade-content"><strong>Nội thất sảnh</strong><small id="hall-interior-detail">Mở món nội thất đầu tiên · tăng 5% giá bán</small><span class="level-row" id="hall-interior-level">0 / 7 · +0%</span></span>
+            <span class="upgrade-cost"><strong id="hall-interior-cost">500</strong><small>xu</small></span>
+          </button>
+          </div>
+          <div id="kitchen-upgrades" hidden>
+            <button class="upgrade-card" id="upgrade-kitchen-stoves" type="button">
+              <span class="upgrade-icon icon-door" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 10h18v10H3zM5 7h4v2H5zm10 0h4v2h-4zM6 13h5v4H6zm8 0h4v4h-4z"/><path d="M7 5h10"/></svg></span>
+              <span class="upgrade-content"><strong>Thêm bếp nấu</strong><small id="kitchen-stove-detail">Mở thêm một vị trí nấu</small><span class="level-row" id="kitchen-stove-level">1 / 6 bếp</span></span>
+              <span class="upgrade-cost"><strong id="kitchen-stove-cost">400</strong><small>xu</small></span>
+            </button>
+            <button class="upgrade-card" id="upgrade-kitchen-cook" type="button">
+              <span class="upgrade-icon icon-star" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1"/><circle cx="12" cy="12" r="5"/></svg></span>
+              <span class="upgrade-content"><strong>Tốc độ nấu</strong><small id="kitchen-cook-detail">Rút ngắn thời gian chế biến</small><span class="level-row" id="kitchen-cook-level">Cấp 0</span></span>
+              <span class="upgrade-cost"><strong id="kitchen-cook-cost">300</strong><small>xu</small></span>
+            </button>
+            <button class="upgrade-card" id="upgrade-kitchen-chef" type="button">
+              <span class="upgrade-icon icon-queue" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 17h10a4 4 0 1 0-4-4M3 13h6m-5-4h8M5 5h4m7 12 3 3 4-5"/></svg></span>
+              <span class="upgrade-content"><strong>Tốc độ đầu bếp</strong><small id="kitchen-chef-detail">Di chuyển nhanh hơn trong bếp</small><span class="level-row" id="kitchen-chef-level">Cấp 0</span></span>
+              <span class="upgrade-cost"><strong id="kitchen-chef-cost">350</strong><small>xu</small></span>
+            </button>
+            <button class="upgrade-card interior-upgrade-card" id="upgrade-kitchen-interior" type="button" aria-label="Nâng cấp nội thất bếp">
+              <span class="upgrade-icon icon-queue" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20h16M6 20V8h12v12M9 8V5h6v3M8 12h3v3H8zm5 0h3v3h-3z"/></svg></span>
+              <span class="upgrade-content"><strong>Nội thất bếp</strong><small id="kitchen-interior-detail">Mở món nội thất đầu tiên · tăng 5% giá bán</small><span class="level-row" id="kitchen-interior-level">0 / 8 · +0%</span></span>
+              <span class="upgrade-cost"><strong id="kitchen-interior-cost">500</strong><small>xu</small></span>
+            </button>
+          </div>
 
           <div class="save-status" id="save-status"><span class="save-check" aria-hidden="true">✓</span> Tiến độ được lưu tự động</div>
+          <details class="test-tools">
+            <summary>Công cụ test</summary>
+            <div class="test-tools__actions">
+              <label for="test-money-amount">Cộng xu</label>
+              <input id="test-money-amount" type="number" min="1" max="1000000000" step="100" value="10000" inputmode="numeric" />
+              <button id="test-add-money" type="button">Cộng xu</button>
+              <button class="test-tools__reset" id="test-reset-game" type="button">Tạo mới màn chơi</button>
+            </div>
+          </details>
       </dialog>
       <dialog class="upgrade-panel menu-panel" id="menu-panel" aria-labelledby="menu-heading">
         <div class="panel-heading"><h2 id="menu-heading">Thực đơn</h2><span class="upgrade-sparkle" aria-hidden="true">✦</span><button class="upgrade-close-button" id="menu-close" type="button" aria-label="Đóng thực đơn">×</button></div>

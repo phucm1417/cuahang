@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" shape-rendering="crispEdges">
+  <defs>
+    <linearGradient id="wall" x2="0" y2="1"><stop stop-color="#f7e8c4"/><stop offset="1" stop-color="#e6d0a5"/></linearGradient>
+    <linearGradient id="wall-side" x2="1" y2="0"><stop stop-color="#d3c29c"/><stop offset=".5" stop-color="#eee1c3"/><stop offset="1" stop-color="#c9b893"/></linearGradient>
+    <linearGradient id="floor" x2="0" y2="1"><stop stop-color="#f2e8cd"/><stop offset="1" stop-color="#e9dfc2"/></linearGradient>
+    <pattern id="tiles" width="100" height="76" patternUnits="userSpaceOnUse">
+      <rect width="100" height="76" fill="#efe5c9"/>
+      <path d="M0 0h100v76H0z" fill="none" stroke="#d4c9a8" stroke-width="3"/>
+      <path d="M5 5h90v66H5z" fill="#f1e8d0" opacity=".7"/>
+      <path d="M10 10h22v4H10zM70 55h18v3H70z" fill="#fff5dc" opacity=".32"/>
+    </pattern>
+    <pattern id="wall-panels" width="170" height="112" patternUnits="userSpaceOnUse">
+      <rect width="170" height="112" fill="url(#wall)"/>
+      <path d="M8 10h154v90H8z" fill="none" stroke="#dac49b" stroke-width="5"/>
+      <path d="M16 18h138v74H16z" fill="#f8edcf" opacity=".32"/>
+      <path d="M24 25h42v3H24z" fill="#fff7df" opacity=".48"/>
+    </pattern>
+  </defs>
+
+  <!-- Open floor and broad 2.5D room shell; intentionally left free of furniture. -->
+  <rect width="1400" height="900" fill="#d9d0b6"/>
+  <path d="M38 36h1324v817H38z" fill="#8b8168" opacity=".18"/>
+  <path d="M54 44h1292v790H54z" fill="url(#floor)"/>
+  <path d="M76 220h1248v600H76z" fill="url(#tiles)"/>
+
+  <!-- Back wall with a centered, open entrance. -->
+  <path d="M54 44h1292v178H54z" fill="url(#wall-panels)"/>
+  <path d="M54 203h1292v23H54z" fill="#8c7555"/>
+  <path d="M54 203h1292v8H54z" fill="#b29468"/>
+  <path d="M54 222h1292v9H54z" fill="#c0aa7b"/>
+
+  <!-- Empty doorway; open floor beyond it and a broad threshold. -->
+  <path d="M590 34h220v194H590z" fill="#78694e"/>
+  <path d="M603 38h194v179H603z" fill="#4d5144"/>
+  <path d="M612 47h176v163H612z" fill="#69725d"/>
+  <path d="M612 47h176v13H612zM612 197h176v13H612z" fill="#b38b58"/>
+  <path d="M590 34h14v194h-14zM796 34h14v194h-14z" fill="#a47b4b"/>
+  <path d="M576 27h248v15H576z" fill="#c19a63"/>
+  <path d="M576 27h248v5H576z" fill="#e1bb7e"/>
+  <path d="M575 220h250v18H575z" fill="#a78b60"/>
+  <path d="M588 224h224v8H588z" fill="#d8bd88"/>
+  <path d="M612 211h176v6H612z" fill="#8c7654" opacity=".56"/>
+
+  <!-- Side walls and continuous baseboards frame a much wider playable area. -->
+  <path d="M54 44h31v778H54z" fill="url(#wall-side)"/>
+  <path d="M1315 44h31v778h-31z" fill="url(#wall-side)"/>
+  <path d="M54 44h13v778H54zM1333 44h13v778h-13z" fill="#b7a47b"/>
+  <path d="M85 218h12v606H85zM1303 218h12v606h-12z" fill="#9b8660"/>
+  <path d="M97 218h6v606h-6zM1297 218h6v606h-6z" fill="#d4bc8a"/>
+
+  <!-- Front edge gives the room a shallow 2.5D cutaway. -->
+  <path d="M54 820h1292v20H54z" fill="#8f805f"/>
+  <path d="M54 820h1292v7H54z" fill="#c6ae7d"/>
+  <path d="M40 840h1320v24H40z" fill="#68725d"/>
+  <path d="M40 840h1320v7H40z" fill="#a5a17a"/>
+  <path d="M54 864h1292v18H54z" fill="#d9ceb0"/>
+</svg>

@@ -1,0 +1,17 @@
+<svg style="overflow:visible" xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240" shape-rendering="geometricPrecision">
+  <path stroke="#604637" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" paint-order="stroke fill" d="M49 197h34v-8h22v-5h109v5h24v8h32v9H49z" fill="#76664c" opacity=".2"/>
+
+  <!-- Table support -->
+  <path stroke="#604637" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" paint-order="stroke fill" d="M104 133h15v62h-15zM201 133h15v62h-15z" fill="#805235"/>
+  <path stroke="#604637" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" paint-order="stroke fill" d="M96 145h128v20h-9v10H105v-10h-9z" fill="#8e5d3a"/>
+  <path stroke="#604637" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" paint-order="stroke fill" d="M105 157h110v8H105z" fill="#b77a49"/>
+  <path stroke="#604637" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" paint-order="stroke fill" d="M110 165h10v29h-10zM198 165h10v29h-10z" fill="#9d6840"/>
+
+  <!-- Single warm wooden table top -->
+  <path stroke="#604637" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" paint-order="stroke fill" d="M61 67h11v-8h176v8h12v9h10v58h-10v9h-12v8H72v-8H61v-9h-9V76h9z" fill="#68452f"/>
+  <path stroke="#604637" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" paint-order="stroke fill" d="M68 71h11v-7h162v7h12v8h9v50h-9v8h-12v7H79v-7H68v-8h-9V79h9z" fill="#c1834d"/>
+  <path stroke="#604637" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" paint-order="stroke fill" d="M77 76h160v7h11v7h8v37h-8v7h-11v7H83v-7H72v-7h-7V90h8v-7h4z" fill="#e5b873"/>
+  <path stroke="#604637" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" paint-order="stroke fill" d="M82 80h154v6h11v7h6v8H73v-8h9z" fill="#f0cf8d"/>
+  <path stroke="#604637" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" paint-order="stroke fill" d="M80 125h157v6h-12v7H83v-7h-9v-6z" fill="#d39b5e"/>
+  <path stroke="#604637" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" paint-order="stroke fill" d="M92 93h24v6H92zM202 108h24v6h-24z" fill="#f6dda4" opacity=".72"/>
+</svg>

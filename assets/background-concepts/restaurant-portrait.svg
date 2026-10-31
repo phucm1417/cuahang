@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1600" viewBox="0 0 720 1600">
+  <defs>
+    <linearGradient id="wall" x2="0" y2="1"><stop stop-color="#f8edd5"/><stop offset="1" stop-color="#e6d1aa"/></linearGradient>
+    <linearGradient id="floor" x2="0" y2="1"><stop stop-color="#f4ebd5"/><stop offset="1" stop-color="#e5d8ba"/></linearGradient>
+    <pattern id="wallpaper" width="120" height="120" patternUnits="userSpaceOnUse"><rect width="120" height="120" fill="url(#wall)"/><path d="M8 15h104v90H8z" fill="none" stroke="#dfcba5" stroke-width="3" opacity=".75"/><path d="M18 25h84v70H18z" fill="#fff7e4" opacity=".18"/></pattern>
+    <pattern id="tiles" width="120" height="112" patternUnits="userSpaceOnUse"><rect width="120" height="112" fill="#eee4ca"/><path d="M0 0h120v112H0z" fill="none" stroke="#d6c9a7" stroke-width="3"/><path d="M10 10h100v92H10z" fill="#fff8e8" opacity=".42"/></pattern>
+    <linearGradient id="wood" x2="0" y2="1"><stop stop-color="#c2925e"/><stop offset="1" stop-color="#8d6040"/></linearGradient>
+    <radialGradient id="sun"><stop stop-color="#fff6cd" stop-opacity=".8"/><stop offset="1" stop-color="#fff6cd" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="720" height="1600" fill="#b9aa89"/>
+  <rect x="20" y="20" width="680" height="1560" rx="34" fill="#796d55" opacity=".2"/>
+  <rect x="28" y="28" width="664" height="1544" rx="28" fill="url(#floor)"/>
+  <path d="M42 42h636v332H42z" fill="url(#wallpaper)"/>
+  <path d="M42 358h636v28H42z" fill="#927b57"/><path d="M42 358h636v8H42z" fill="#c5a777"/>
+  <ellipse cx="360" cy="392" rx="310" ry="250" fill="url(#sun)"/>
+  <path d="M246 52h228v272H246z" rx="16" fill="#766347"/>
+  <path d="M266 70h188v226H266z" fill="#47534a"/>
+  <path d="M280 84h160v190H280z" fill="#8da17d"/>
+  <path d="M352 84v190M280 178h160" stroke="#e8d7b5" stroke-width="12"/>
+  <path d="M220 48h280v20H220zM220 48h280v6H220z" fill="#bf9861"/>
+  <path d="M224 305h272v18H224z" fill="#a47f51"/><path d="M238 307h244v6H238z" fill="#dec18a"/>
+  <path d="M42 386h636v1170H42z" fill="url(#tiles)"/>
+  <path d="M42 1544h636v24H42z" fill="#8d7d5d"/><path d="M42 1544h636v8H42z" fill="#c6ae7d"/>
+  <path d="M42 388h22v1156H42zM656 388h22v1156h-22z" fill="#b29a6f" opacity=".8"/>
+  <path d="M120 371h150v9H120zM450 371h150v9H450z" fill="#d8c08f" opacity=".8"/>
+</svg>
