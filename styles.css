@@ -477,6 +477,8 @@ dialog.menu-panel {
 .kitchen-prop { position: absolute; overflow: visible; }
 .kitchen-prop img { display: block; width: 100%; height: 100%; object-fit: fill; image-rendering: pixelated; filter: drop-shadow(0 5px 3px rgb(70 50 30 / 18%)); }
 .room-scene.is-kitchen { background-image: url("./assets/background-concepts/kitchen-wide-v1.svg"); }
+.room-scene.is-garden { background-image: url("./assets/background-concepts/garden-wide.svg"); }
+.room-scene.is-attic { background-image: url("./assets/background-concepts/attic-wide.svg"); }
 .room-scene.is-kitchen .kitchen-layer { display: block; }
 .room-scene.is-kitchen .cooking-layer { display: block; }
 .room-scene.is-kitchen .kitchen-food-counter { display: block; }
@@ -485,6 +487,40 @@ dialog.menu-panel {
 .room-scene:not(.is-kitchen) .hall-food-counter { display: block; }
 .room-scene.is-kitchen .staff { display: none !important; }
 .room-scene:not(.is-kitchen) .chef { display: none !important; }
+.room-scene.is-garden .scene-props-layer,
+.room-scene.is-attic .scene-props-layer,
+.room-scene.is-garden .table-layer,
+.room-scene.is-garden .chair-layer,
+.room-scene.is-garden .kitchen-layer,
+.room-scene.is-garden .cooking-layer,
+.room-scene.is-garden .kitchen-food-counter,
+.room-scene.is-garden .hall-food-counter,
+.room-scene.is-garden .guest-layer,
+.room-scene.is-garden .order-layer,
+.room-scene.is-garden .payment-layer,
+.room-scene.is-garden .waiting-queue,
+.room-scene.is-garden .entry-door,
+.room-scene.is-garden .door-glow,
+.room-scene.is-garden .entrance-caption,
+.room-scene.is-garden .menu-open-button,
+.room-scene.is-garden .staff,
+.room-scene.is-garden .chef,
+.room-scene.is-attic .table-layer,
+.room-scene.is-attic .chair-layer,
+.room-scene.is-attic .kitchen-layer,
+.room-scene.is-attic .cooking-layer,
+.room-scene.is-attic .kitchen-food-counter,
+.room-scene.is-attic .hall-food-counter,
+.room-scene.is-attic .guest-layer,
+.room-scene.is-attic .order-layer,
+.room-scene.is-attic .payment-layer,
+.room-scene.is-attic .waiting-queue,
+.room-scene.is-attic .entry-door,
+.room-scene.is-attic .door-glow,
+.room-scene.is-attic .entrance-caption,
+.room-scene.is-attic .menu-open-button,
+.room-scene.is-attic .staff,
+.room-scene.is-attic .chef { display: none !important; }
 .room-scene.is-kitchen .table-layer,
 .room-scene.is-kitchen .chair-layer,
 .room-scene.is-kitchen .waiting-queue,
@@ -496,6 +532,47 @@ dialog.menu-panel {
 .room-scene.is-kitchen .entrance-caption,
 .room-scene.is-kitchen .menu-open-button,
 .room-scene.is-kitchen .invite-wrap { display: none !important; }
+.map-feature-layer { position: absolute; z-index: 5; inset: 0; overflow: hidden; pointer-events: none; }
+.map-feature-layer[hidden] { display: none; }
+.garden-plots, .attic-attractions, .garden-visitors, .attic-visitors { position: absolute; inset: 0; }
+.garden-plot { position: absolute; display: grid; width: 15%; aspect-ratio: 1.85; place-items: center; transform: translate(-50%, -50%); border: 2px solid rgb(255 239 195 / 15%); border-radius: 35%; background: transparent; cursor: pointer; pointer-events: auto; }
+.garden-plot:hover { border-color: rgb(255 240 194 / 58%); background: rgb(255 242 206 / 12%); }
+.garden-plot.is-locked { opacity: .28; cursor: not-allowed; }
+.garden-plot__crop { z-index: 1; width: 34%; height: 58%; object-fit: contain; filter: drop-shadow(0 2px 2px rgb(55 48 32 / 38%)); animation: crop-breathe 2.3s ease-in-out infinite alternate; }
+.garden-plot__progress { position: absolute; right: 9%; bottom: 10%; left: 9%; display: none; height: 5px; overflow: hidden; border: 1px solid rgb(255 244 213 / 80%); border-radius: 99px; background: rgb(74 55 35 / 35%); }
+.garden-plot.is-growing .garden-plot__progress, .garden-plot.is-ready .garden-plot__progress { display: block; }
+.garden-plot__progress::after { display: block; width: var(--growth, 0%); height: 100%; border-radius: inherit; background: linear-gradient(90deg, #b4d476, #f2d778); content: ""; transition: width .45s linear; }
+.garden-plot.is-ready .garden-plot__crop { animation: crop-ready .65s ease-in-out infinite alternate; }
+.garden-plot__water { position: absolute; top: 3%; right: 8%; font-size: 17px; }
+@keyframes crop-breathe { to { transform: translateY(-4px) scale(1.06); } }
+@keyframes crop-ready { to { transform: translateY(-5px) scale(1.12); filter: drop-shadow(0 0 8px #ffe58a); } }
+.garden-tools { position: absolute; z-index: 10; bottom: 3.5%; left: 3%; display: flex; gap: 7px; padding: 7px; border: 1px solid rgb(255 249 224 / 70%); border-radius: 18px; background: rgb(255 251 235 / 84%); box-shadow: 0 6px 18px rgb(56 67 44 / 18%); pointer-events: auto; backdrop-filter: blur(7px); }
+.garden-tool { position: relative; display: grid; width: clamp(40px, 4.8vw, 58px); aspect-ratio: 1; place-items: center; border: 1px solid rgb(172 151 111 / 25%); border-radius: 15px; background: #fffdf4; cursor: pointer; }
+.garden-tool > img { width: 76%; height: 76%; object-fit: contain; }
+.garden-tool small { position: absolute; right: -3px; bottom: -3px; display: grid; min-width: 18px; height: 18px; place-items: center; border: 1px solid white; border-radius: 99px; background: #738d61; color: white; font-size: 9px; font-weight: 900; }
+.garden-tool b { position: absolute; top: -4px; left: -4px; display: grid; min-width: 17px; height: 17px; place-items: center; border: 1px solid white; border-radius: 99px; background: #e9c56e; color: #694d2e; font-size: 8px; }
+.garden-tool.is-selected { outline: 3px solid #dfbd69; box-shadow: 0 0 0 5px rgb(236 204 122 / 22%); }
+.map-visitor { position: absolute; z-index: 8; width: 9%; aspect-ratio: 1; transform: translate(-50%, -50%); transition: left 1.8s ease, top 1.8s ease; pointer-events: none; }
+.map-visitor > img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 4px 2px rgb(54 45 32 / 28%)); }
+.map-visitor.is-arriving { animation: map-visitor-in .9s cubic-bezier(.2,.7,.25,1) both; }
+.garden-visitor.is-arriving { animation-name: map-visitor-in-top; }
+.map-visitor.is-leaving { animation: map-visitor-out .7s ease-in both; }
+@keyframes map-visitor-in { from { opacity: 0; transform: translate(-190%, -50%); } to { opacity: 1; transform: translate(-50%, -50%); } }
+@keyframes map-visitor-in-top { from { opacity: 0; transform: translate(-50%, -190%); } to { opacity: 1; transform: translate(-50%, -50%); } }
+@keyframes map-visitor-out { to { opacity: 0; transform: translate(90%, -55%); } }
+.map-visitor__order { position: absolute; top: -6%; right: -22%; display: grid; width: 44px; aspect-ratio: 1; place-items: center; border: 2px solid #fff8e8; border-radius: 50%; background: rgb(255 250 231 / 94%); box-shadow: 0 4px 12px rgb(65 49 28 / 22%); font-size: 22px; cursor: pointer; pointer-events: auto; }
+.map-visitor__order:disabled { filter: grayscale(1); opacity: .55; cursor: not-allowed; }
+.map-visitor__order img { width: 70%; height: 70%; object-fit: contain; }
+.map-visitor__order small { position: absolute; right: -5px; bottom: -5px; display: grid; min-width: 20px; height: 20px; place-items: center; border: 1px solid white; border-radius: 50%; background: #ebc76a; color: #694d2e; font-size: 8px; font-weight: 900; }
+.attic-attraction { position: absolute; display: grid; width: 14%; aspect-ratio: 1; place-items: center; transform: translate(-50%, -50%); border: 2px solid rgb(255 238 190 / 4%); border-radius: 50%; background: rgb(255 246 220 / 3%); cursor: pointer; pointer-events: auto; transition: background .18s, box-shadow .18s; }
+.attic-attraction:hover, .attic-attraction.is-playing { border-color: rgb(255 230 145 / 70%); background: rgb(255 233 165 / 14%); box-shadow: 0 0 24px rgb(255 221 126 / 42%); }
+.attic-attraction > span { display: grid; width: 36px; aspect-ratio: 1; place-items: center; border: 1px solid rgb(255 244 211 / 64%); border-radius: 50%; background: rgb(255 251 232 / 78%); color: #806444; font-size: 22px; box-shadow: 0 3px 10px rgb(56 41 28 / 22%); }
+.attic-mini-game { position: absolute; z-index: 12; bottom: 6%; left: 50%; display: flex; gap: 15px; padding: 10px; transform: translateX(-50%); border: 1px solid rgb(255 245 211 / 82%); border-radius: 24px; background: rgb(255 250 231 / 90%); box-shadow: 0 10px 26px rgb(45 34 28 / 28%); pointer-events: auto; }
+.attic-mini-game[hidden] { display: none; }
+.attic-mini-target { display: grid; width: clamp(52px, 6vw, 76px); aspect-ratio: 1; place-items: center; border: 2px solid #c7b798; border-radius: 50%; background: #e9dfca; color: #8a795c; font-size: 27px; cursor: pointer; transition: .12s; }
+.attic-mini-target.is-lit { transform: scale(1.1); border-color: #f3cb67; background: radial-gradient(circle, #fff6be, #e9b94f); color: #765021; box-shadow: 0 0 0 7px rgb(245 203 103 / 24%), 0 0 24px #f3cb67; }
+.attic-guest-sparkle { position: absolute; top: -12%; right: 0; color: #f2d26f; font-size: 22px; animation: sparkle-pulse .55s ease-in-out infinite alternate; }
+@keyframes sparkle-pulse { to { opacity: .35; transform: scale(.7) rotate(28deg); } }
 @media (max-width: 600px) {
   .food-counter { width: clamp(82px, 24%, 100px); }
   .kitchen-food-counter { top: 57%; left: 13%; }
@@ -513,6 +590,8 @@ dialog.menu-panel {
   .room-frame { display: block; overflow: hidden; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
   .room-scene { width: 100%; height: 100%; min-height: 0; aspect-ratio: auto; border: 0; border-radius: 0; background-image: url("./assets/background-concepts/restaurant-portrait.svg"); background-position: center; background-size: 100% 100%; box-shadow: none; }
   .room-scene.is-kitchen { background-image: url("./assets/background-concepts/kitchen-portrait.svg"); }
+  .room-scene.is-garden { background-image: url("./assets/background-concepts/garden-portrait.svg"); }
+  .room-scene.is-attic { background-image: url("./assets/background-concepts/attic-portrait.svg"); }
   .scene-stats { top: max(12px, env(safe-area-inset-top)); left: 12px; display: flex; gap: 6px; }
   .scene-stats .stat-pill { min-width: 72px; gap: 5px; padding: 5px 7px; border-radius: 12px; }
   .scene-stats .stat-copy small { display: none; }
@@ -520,6 +599,16 @@ dialog.menu-panel {
   .sound-button { top: max(12px, env(safe-area-inset-top)); right: 12px; }
   .map-toggle { top: 48%; right: 12px; width: 46px; height: 46px; border-radius: 15px; }
   .room-scene.is-kitchen .map-toggle { right: auto; left: 12px; }
+  .garden-plot { width: 27%; }
+  .garden-tools { bottom: 3%; left: 2%; gap: 4px; padding: 5px; border-radius: 14px; }
+  .garden-tool { width: clamp(38px, 10vw, 52px); border-radius: 12px; }
+  .garden-tool > img { width: 76%; height: 76%; }
+  .map-visitor { width: 19%; }
+  .map-visitor__order { width: 36px; font-size: 19px; }
+  .attic-attraction { width: 28%; }
+  .attic-attraction > span { width: 29px; font-size: 19px; }
+  .attic-mini-game { bottom: 12%; gap: 10px; padding: 8px; }
+  .attic-mini-target { width: clamp(56px, 17vw, 78px); }
   .menu-open-button { bottom: max(14px, env(safe-area-inset-bottom)); left: 12px; width: 52px; height: 52px; border-radius: 16px; }
   .menu-open-button > span { display: none; }
   .menu-open-button svg { width: 24px; height: 24px; }

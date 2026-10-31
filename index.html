@@ -6,8 +6,13 @@
     <meta name="theme-color" content="#f6eed9" />
     <meta name="description" content="Quản lý nhà hàng pixel art: mời khách, phục vụ món và phát triển danh tiếng." />
     <title>Tiệm Nhỏ — Nhà hàng của bạn</title>
-    <link rel="stylesheet" href="./styles.css?v=52" />
-    <script src="./game.js?v=52" defer></script>
+    <link rel="stylesheet" href="./styles.css?v=53" />
+    <script src="./maps/registry.js?v=54" defer></script>
+    <script src="./maps/restaurant.js?v=54" defer></script>
+    <script src="./maps/kitchen.js?v=54" defer></script>
+    <script src="./maps/garden.js?v=54" defer></script>
+    <script src="./maps/attic.js?v=54" defer></script>
+    <script src="./game.js?v=54" defer></script>
   </head>
   <body>
     <main class="game-shell">
@@ -22,6 +27,8 @@
               </div>
               <div class="scene-props-layer scene-props-layer--wall" id="wall-props-layer" aria-hidden="true"></div>
               <div class="scene-props-layer scene-props-layer--floor" id="floor-props-layer" aria-hidden="true"></div>
+              <div class="map-feature-layer" id="garden-map-layer"></div>
+              <div class="map-feature-layer" id="attic-map-layer"></div>
               <div class="door-glow" aria-hidden="true"></div>
               <div class="entry-door" id="entry-door" aria-hidden="true">
                 <span class="entry-door__leaf entry-door__leaf--left"></span>
@@ -140,6 +147,20 @@
               <span class="upgrade-icon icon-queue" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20h16M6 20V8h12v12M9 8V5h6v3M8 12h3v3H8zm5 0h3v3h-3z"/></svg></span>
               <span class="upgrade-content"><strong>Nội thất bếp</strong><small id="kitchen-interior-detail">Mở món nội thất đầu tiên · tăng 5% giá bán</small><span class="level-row" id="kitchen-interior-level">0 / 8 · +0%</span></span>
               <span class="upgrade-cost"><strong id="kitchen-interior-cost">500</strong><small>xu</small></span>
+            </button>
+          </div>
+          <div id="garden-upgrades" hidden>
+            <button class="upgrade-card" id="upgrade-garden-plots" type="button">
+              <span class="upgrade-icon icon-queue" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 20h18M5 17c0-5 3-8 7-8s7 3 7 8M12 9V4m-3 3 3-3 3 3"/></svg></span>
+              <span class="upgrade-content"><strong>Mở rộng luống</strong><small id="garden-upgrade-detail">Mở thêm luống trồng</small><span class="level-row" id="garden-upgrade-level">4 / 6 luống</span></span>
+              <span class="upgrade-cost"><strong id="garden-upgrade-cost">500</strong><small>xu</small></span>
+            </button>
+          </div>
+          <div id="attic-upgrades" hidden>
+            <button class="upgrade-card" id="upgrade-attic-leisure" type="button">
+              <span class="upgrade-icon icon-star" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 13a9 9 0 1 1 18 0M5 14h3v5H5zm11 0h3v5h-3zM8 21h8"/></svg></span>
+              <span class="upgrade-content"><strong>Không gian giải trí</strong><small id="attic-upgrade-detail">Tăng thu nhập khách và mini game</small><span class="level-row" id="attic-upgrade-level">Cấp 0 / 5</span></span>
+              <span class="upgrade-cost"><strong id="attic-upgrade-cost">600</strong><small>xu</small></span>
             </button>
           </div>
 

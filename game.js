@@ -2,6 +2,7 @@
   "use strict";
 
   const STORAGE_KEY = "tiem-nho-save-v1";
+  const MAP_ORDER = window.TiemNhoMaps.list();
   const guestSprites = ["Idle_2", "Idle_3", "Idle_4", "Idle_5", "Idle_6", "Idle_7", "Idle_8", "Idle_9", "Idle_10", "Idle_12"];
   const menu = [
     { name: "Súp nấm", icon: "🍲", sprite: "./assets/sprite-library/food/mushroom-soup.svg", price: 16 },
@@ -89,6 +90,8 @@
     mapPlacementZones: document.querySelector("#map-placement-zones"),
     wallPlacementZone: document.querySelector("#wall-placement-zone"),
     floorPlacementZone: document.querySelector("#floor-placement-zone"),
+    gardenMapLayer: document.querySelector("#garden-map-layer"),
+    atticMapLayer: document.querySelector("#attic-map-layer"),
     menuOpen: document.querySelector("#menu-open"),
     menuPanel: document.querySelector("#menu-panel"),
     menuClose: document.querySelector("#menu-close"),
@@ -134,6 +137,16 @@
     kitchenInteriorDetail: document.querySelector("#kitchen-interior-detail"),
     kitchenInteriorLevel: document.querySelector("#kitchen-interior-level"),
     kitchenInteriorCost: document.querySelector("#kitchen-interior-cost"),
+    gardenUpgrades: document.querySelector("#garden-upgrades"),
+    gardenUpgrade: document.querySelector("#upgrade-garden-plots"),
+    gardenUpgradeDetail: document.querySelector("#garden-upgrade-detail"),
+    gardenUpgradeLevel: document.querySelector("#garden-upgrade-level"),
+    gardenUpgradeCost: document.querySelector("#garden-upgrade-cost"),
+    atticUpgrades: document.querySelector("#attic-upgrades"),
+    atticUpgrade: document.querySelector("#upgrade-attic-leisure"),
+    atticUpgradeDetail: document.querySelector("#attic-upgrade-detail"),
+    atticUpgradeLevel: document.querySelector("#attic-upgrade-level"),
+    atticUpgradeCost: document.querySelector("#attic-upgrade-cost"),
     tableLayer: document.querySelector("#table-layer"),
     chairLayer: document.querySelector("#chair-layer"),
     kitchenLayer: document.querySelector("#kitchen-layer"),
@@ -171,6 +184,8 @@
     hallInteriorLevel: 0,
     kitchenInteriorLevel: 0,
     unlockedMenuCount: 1,
+    gardenData: null,
+    atticData: null,
     inviteProgress: 0,
     guests: new Map(),
     waitingQueue: [],
@@ -213,6 +228,7 @@
   const chefMotion = { x: 82, y: 57, facing: "south" };
   let chefWanderPauseUntil = 0;
   let foodDragState = null;
+  let mapControllers = {};
 
   function loadProgress() {
     try {
@@ -232,6 +248,8 @@
       state.hallInteriorLevel = Math.min(7, Math.max(0, Math.floor(Number(saved.hallInteriorLevel) || 0)));
       state.kitchenInteriorLevel = Math.min(8, Math.max(0, Math.floor(Number(saved.kitchenInteriorLevel) || 0)));
       state.unlockedMenuCount = Math.min(menu.length, Math.max(1, Math.floor(Number(saved.unlockedMenuCount) || 1)));
+      state.gardenData = saved.gardenData || null;
+      state.atticData = saved.atticData || null;
     } catch {
       // The game remains playable when browser storage is unavailable or malformed.
     }
@@ -251,11 +269,36 @@
         hallInteriorLevel: state.hallInteriorLevel,
         kitchenInteriorLevel: state.kitchenInteriorLevel,
         unlockedMenuCount: state.unlockedMenuCount,
+        gardenData: mapControllers.garden?.serialize?.() || state.gardenData,
+        atticData: mapControllers.attic?.serialize?.() || state.atticData,
       }));
       el.saveStatus.innerHTML = '<span class="save-check" aria-hidden="true">✓</span> Tiến độ được lưu tự động';
     } catch {
       el.saveStatus.innerHTML = '<span class="save-check" aria-hidden="true">✓</span> Có thể tiếp tục chơi trên trang này';
     }
+  }
+
+  function initializeMapControllers() {
+    const context = {
+      spend(amount) {
+        if (state.money < amount) return false;
+        state.money -= amount;
+        render();
+        saveProgress();
+        return true;
+      },
+      reward(amount, reputation) {
+        state.money += amount;
+        state.reputationPoints += reputation;
+        render();
+        saveProgress();
+      },
+      onChange() { render(); saveProgress(); },
+      playSound: chime,
+      getLayout: () => state.layoutName,
+    };
+    mapControllers.garden = window.TiemNhoMaps.get("garden").create(el.gardenMapLayer, context, state.gardenData || {});
+    mapControllers.attic = window.TiemNhoMaps.get("attic").create(el.atticMapLayer, context, state.atticData || {});
   }
 
   function coins(value) {
@@ -363,7 +406,7 @@
     document.body.classList.toggle("panel-menu-open", menuOpen);
     document.body.classList.toggle("panel-upgrade-open", upgradesOpen);
     document.body.classList.toggle("panel-both-open", menuOpen && upgradesOpen);
-    el.mapPlacementZones.hidden = !upgradesOpen;
+    el.mapPlacementZones.hidden = !upgradesOpen || !["restaurant", "kitchen"].includes(state.mapMode);
   }
 
   function getMapGeometry() {
@@ -395,22 +438,47 @@
     placementZoneStyle(el.floorPlacementZone, geometry.floor, geometry);
   }
 
+  function applyMapBackground() {
+    const definition = window.TiemNhoMaps.get(state.mapMode) || window.TiemNhoMaps.get("restaurant");
+    const source = state.layoutName === "portrait"
+      ? definition.portraitBackground
+      : state.layoutName === "mobile"
+        ? definition.mobileBackground || definition.wideBackground
+        : definition.wideBackground;
+    if (source) el.roomScene.style.backgroundImage = `url("${source}")`;
+  }
+
   function renderMapMode() {
+    const definition = window.TiemNhoMaps.get(state.mapMode) || window.TiemNhoMaps.get("restaurant");
     const inKitchen = state.mapMode === "kitchen";
+    const inGarden = state.mapMode === "garden";
+    const inAttic = state.mapMode === "attic";
     el.roomScene.classList.toggle("is-kitchen", inKitchen);
+    el.roomScene.classList.toggle("is-garden", inGarden);
+    el.roomScene.classList.toggle("is-attic", inAttic);
+    applyMapBackground();
+    el.gardenMapLayer.hidden = !inGarden;
+    el.atticMapLayer.hidden = !inAttic;
+    mapControllers.garden?.setActive(inGarden);
+    mapControllers.attic?.setActive(inAttic);
+    mapControllers.garden?.setLayout(state.layoutName);
+    mapControllers.attic?.setLayout(state.layoutName);
     renderPlacementZones(getMapGeometry());
     renderSceneProps();
     rebuildStaffGrid();
-    el.restaurantUpgrades.hidden = inKitchen;
+    el.restaurantUpgrades.hidden = state.mapMode !== "restaurant";
     el.kitchenUpgrades.hidden = !inKitchen;
+    el.gardenUpgrades.hidden = !inGarden;
+    el.atticUpgrades.hidden = !inAttic;
     el.staff.querySelector("img").src = spriteUrl("Idle_5", staffMotion.facing);
     el.chef.querySelector("img").src = spriteUrl("Idle", chefMotion.facing);
     el.chef.classList.add("is-visible");
-    el.mapToggle.setAttribute("aria-pressed", String(inKitchen));
-    el.mapToggle.setAttribute("aria-label", inKitchen ? "Về nhà hàng" : "Vào bếp");
-    el.mapToggleIcon.innerHTML = inKitchen
-      ? '<path d="M3 20V10l9-7 9 7v10h-6v-6H9v6z"/><path d="M2 10h20M5 12h2m10 0h2"/>'
-      : '<path d="M3 11h18v2a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3zM6 16v3m12-3v3M7 8l-1-2m6 2V4m6 4 1-2"/><path d="M5 20h14"/>';
+    const nextMap = MAP_ORDER[(MAP_ORDER.indexOf(state.mapMode) + 1) % MAP_ORDER.length];
+    const nextDefinition = window.TiemNhoMaps.get(nextMap);
+    el.mapToggle.removeAttribute("aria-pressed");
+    el.mapToggle.setAttribute("aria-label", `Đến ${nextDefinition.name}`);
+    el.mapToggleIcon.innerHTML = nextDefinition.icon;
+    el.invite.setAttribute("aria-label", inGarden ? "Đón khách đến vườn" : inAttic ? "Đón khách lên tầng gác" : "Mời khách");
     if (el.upgradePanel.open) syncPanelLayout();
   }
 
@@ -419,39 +487,20 @@
     const portrait = state.layoutName === "portrait";
     const mobile = state.layoutName === "mobile";
     const tableWidth = mobile ? 0.32 : 0.21;
-    const hallDesk = {
-      x: portrait ? 0.17 : mobile ? 0.17 : 0.15,
-      y: portrait ? 0.35 : mobile ? 0.46 : 0.52,
-      width: tableWidth * 0.65,
-      aspect: 1.5,
-    };
-    const deskHeight = hallDesk.width * (el.roomScene.clientWidth / Math.max(1, el.roomScene.clientHeight)) / hallDesk.aspect;
-    const hallProps = [
-      { asset: "hall-service-desk", name: "Quầy thu ngân", surface: "floor", x: hallDesk.x, y: hallDesk.y, width: hallDesk.width, aspect: hallDesk.aspect, anchor: "bottom", blocks: true },
-      { asset: "tip-jar", name: "Hũ tiền tip", surface: "floor", x: hallDesk.x, y: hallDesk.y - deskHeight * (1 - 0.2875), width: tableWidth * 0.22, aspect: 0.8, anchor: "bottom" },
-      { asset: "tea-table", name: "Bàn trà", surface: "floor", x: portrait ? 0.84 : mobile ? 0.86 : 0.88, y: portrait ? 0.35 : mobile ? 0.46 : 0.52, width: tableWidth * 0.60, aspect: 1.6, anchor: "bottom", blocks: true },
-      { asset: "entry-planter", name: "Chậu cây cửa vào", surface: "floor", x: portrait ? 0.38 : 0.36, y: portrait ? 0.34 : mobile ? 0.46 : 0.52, width: tableWidth * 0.45, aspect: 1.15, anchor: "bottom", blocks: true },
-      { asset: "entry-planter", name: "Chậu cây cửa vào", surface: "floor", x: portrait ? 0.62 : 0.64, y: portrait ? 0.34 : mobile ? 0.46 : 0.52, width: tableWidth * 0.45, aspect: 1.15, anchor: "bottom", blocks: true, flip: true },
-      { asset: "foyer-rug", name: "Thảm sảnh", surface: "floor", x: 0.5, y: portrait ? 0.82 : mobile ? 0.86 : 0.86, width: tableWidth * 1.10, aspect: 1.75, anchor: "bottom" },
-      { asset: "wall-window", name: "Cửa sổ sảnh", surface: "wall", x: 0.16, y: portrait ? 0.12 : 0.123, width: tableWidth * 0.55, aspect: 1.33, anchor: "center" },
-    ];
-    const kitchenProps = [
-      { asset: "kitchen-window", name: "Cửa sổ bếp", surface: "wall", x: 0.16, y: portrait ? 0.13 : 0.145, width: tableWidth * 0.52, aspect: 1, anchor: "center" },
-      { asset: "kitchen-wall-cabinet", name: "Tủ bếp treo", surface: "wall", x: 0.52, y: portrait ? 0.14 : 0.145, width: tableWidth * 0.55, aspect: 1.17, anchor: "center" },
-      { asset: "kitchen-ingredient-shelf", name: "Kệ nguyên liệu", surface: "wall", x: 0.82, y: 0.14, width: tableWidth * 0.42, aspect: 1.08, anchor: "center" },
-      { asset: "kitchen-hanging-rack", name: "Giá treo đồ bếp", surface: "wall", x: 0.30, y: portrait ? 0.21 : mobile ? 0.185 : 0.176, width: tableWidth * 0.40, aspect: 1.15, anchor: "center" },
-      { asset: "kitchen-prep-sink", name: "Bàn sơ chế", surface: "floor", x: 0.50, y: portrait ? 0.35 : mobile ? 0.40 : 0.40, width: tableWidth * 0.68, aspect: 1.77, anchor: "bottom", blocks: true },
-      { asset: "kitchen-refrigerator", name: "Tủ lạnh", surface: "floor", x: portrait ? 0.145 : mobile ? 0.13 : 0.12, y: portrait ? 0.87 : mobile ? 0.90 : 0.85, width: tableWidth * 0.50, aspect: 0.73, anchor: "bottom", blocks: true },
-      { asset: "kitchen-waste-bin", name: "Thùng rác", surface: "floor", x: portrait ? 0.87 : 0.90, y: portrait ? 0.87 : mobile ? 0.90 : 0.85, width: tableWidth * 0.36, aspect: 0.8, anchor: "bottom", blocks: true },
-      { asset: "foyer-rug", name: "Thảm chống trượt", surface: "floor", x: 0.5, y: portrait ? 0.83 : mobile ? 0.90 : 0.85, width: tableWidth * 0.88, aspect: 1.75, anchor: "bottom" },
-    ];
     const geometry = getMapGeometry();
-    const isKitchen = state.mapMode === "kitchen";
-    const props = isKitchen ? kitchenProps.slice(0, state.kitchenInteriorLevel) : hallProps.slice(0, state.hallInteriorLevel);
+    const definition = window.TiemNhoMaps.get(state.mapMode);
+    const props = definition?.furniture?.({
+      portrait,
+      mobile,
+      tableWidth,
+      sceneAspect: el.roomScene.clientWidth / Math.max(1, el.roomScene.clientHeight),
+    }) || [];
+    const level = state.mapMode === "kitchen" ? state.kitchenInteriorLevel : state.hallInteriorLevel;
+    const visibleProps = props.slice(0, level);
     const wallElements = [];
     const floorElements = [];
     state.scenePropObstacles = [];
-    props.forEach((prop) => {
+    visibleProps.forEach((prop) => {
       const zone = geometry[prop.surface];
       const widthInMap = prop.width * geometry.width;
       const heightInMap = widthInMap / prop.aspect;
@@ -530,6 +579,20 @@
     el.kitchenChefLevel.textContent = `Cấp ${state.kitchenChefSpeedLevel} / 10`;
     el.kitchenChefCost.textContent = state.kitchenChefSpeedLevel >= 10 ? "MAX" : coins(kitchenChefCost());
     el.kitchenChefUpgrade.disabled = state.kitchenChefSpeedLevel >= 10 || state.money < kitchenChefCost();
+    const gardenUpgrade = mapControllers.garden?.renderUpgrade();
+    if (gardenUpgrade) {
+      el.gardenUpgradeDetail.textContent = gardenUpgrade.detail;
+      el.gardenUpgradeLevel.textContent = `${4 + gardenUpgrade.level} / 6 luống`;
+      el.gardenUpgradeCost.textContent = gardenUpgrade.cost === null ? "MAX" : coins(gardenUpgrade.cost);
+      el.gardenUpgrade.disabled = gardenUpgrade.cost === null || state.money < gardenUpgrade.cost;
+    }
+    const atticUpgrade = mapControllers.attic?.renderUpgrade();
+    if (atticUpgrade) {
+      el.atticUpgradeDetail.textContent = atticUpgrade.detail;
+      el.atticUpgradeLevel.textContent = `Cấp ${atticUpgrade.level} / ${atticUpgrade.max}`;
+      el.atticUpgradeCost.textContent = atticUpgrade.cost === null ? "MAX" : coins(atticUpgrade.cost);
+      el.atticUpgrade.disabled = atticUpgrade.cost === null || state.money < atticUpgrade.cost;
+    }
     const hallNextFurniture = hallFurnitureNames[state.hallInteriorLevel];
     const hallInteriorBonus = state.hallInteriorLevel * 5;
     el.hallInteriorDetail.textContent = hallNextFurniture
@@ -547,10 +610,15 @@
     el.kitchenInteriorCost.textContent = kitchenNextFurniture ? coins(interiorCost(state.kitchenInteriorLevel)) : "MAX";
     el.kitchenInteriorUpgrade.disabled = !kitchenNextFurniture || state.money < interiorCost(state.kitchenInteriorLevel);
     renderMenu();
-    el.invite.disabled = state.guests.size + state.waitingQueue.length >= guestCapacity();
+    const isDestinationMap = state.mapMode === "garden" || state.mapMode === "attic";
+    el.invite.disabled = isDestinationMap
+      ? !mapControllers[state.mapMode]?.canVisit()
+      : state.guests.size + state.waitingQueue.length >= guestCapacity();
+    const inviteLabel = state.mapMode === "garden" ? "Đón khách đến vườn"
+      : state.mapMode === "attic" ? "Đón khách lên tầng gác" : "Mời khách";
     el.invite.setAttribute("aria-label", el.invite.disabled
-      ? "Đã đủ chỗ trong nhà hàng và hàng chờ"
-      : `Mời khách, tiến độ ${state.inviteProgress} phần trăm, mỗi lần bấm tăng ${chancePerTap()} phần trăm`);
+      ? "Hiện không thể đón thêm khách"
+      : `${inviteLabel}, tiến độ ${state.inviteProgress} phần trăm, mỗi lần bấm tăng ${chancePerTap()} phần trăm`);
     renderMoneyBubbles();
   }
 
@@ -959,6 +1027,9 @@
   function arrangeTables() {
     const nextLayout = getLayoutName();
     state.layoutName = nextLayout;
+    applyMapBackground();
+    mapControllers.garden?.setLayout(nextLayout);
+    mapControllers.attic?.setLayout(nextLayout);
     state.tableSeats = getSeatLayout(nextLayout);
     if (!el.tableLayer.children.length) {
       state.tableSeats.forEach((_, index) => {
@@ -1463,12 +1534,14 @@
   }
 
   function inviteGuest() {
-    if (state.guests.size + state.waitingQueue.length >= guestCapacity()) return;
+    const isDestinationMap = state.mapMode === "garden" || state.mapMode === "attic";
+    const controller = mapControllers[state.mapMode];
+    if (isDestinationMap ? !controller?.canVisit() : state.guests.size + state.waitingQueue.length >= guestCapacity()) return;
     state.inviteProgress = Math.min(100, state.inviteProgress + chancePerTap());
     chime("invite");
     if (state.inviteProgress >= 100) {
       state.inviteProgress = 0;
-      if (spawnGuest()) showInviteSuccess();
+      if ((isDestinationMap ? controller.visit() : spawnGuest())) showInviteSuccess();
     }
     render();
   }
@@ -2044,7 +2117,8 @@
   el.menuPanel.addEventListener("close", syncPanelLayout);
   el.mapToggle.addEventListener("click", () => {
     chime("click");
-    state.mapMode = state.mapMode === "restaurant" ? "kitchen" : "restaurant";
+    const currentMapIndex = MAP_ORDER.indexOf(state.mapMode);
+    state.mapMode = MAP_ORDER[(currentMapIndex + 1) % MAP_ORDER.length];
     renderMapMode();
     render();
   });
@@ -2056,6 +2130,12 @@
   el.kitchenChefUpgrade.addEventListener("click", () => purchaseKitchenUpgrade("chef"));
   el.hallInteriorUpgrade.addEventListener("click", () => purchaseInteriorUpgrade("hall"));
   el.kitchenInteriorUpgrade.addEventListener("click", () => purchaseInteriorUpgrade("kitchen"));
+  el.gardenUpgrade.addEventListener("click", () => {
+    if (mapControllers.garden.upgrade()) chime("upgrade");
+  });
+  el.atticUpgrade.addEventListener("click", () => {
+    if (mapControllers.attic.upgrade()) chime("upgrade");
+  });
   el.testAddMoney.addEventListener("click", () => {
     const amount = Math.floor(Number(el.testMoneyAmount.value));
     if (!Number.isFinite(amount) || amount < 1 || amount > 1_000_000_000) return;
@@ -2080,6 +2160,7 @@
   });
 
   loadProgress();
+  initializeMapControllers();
   arrangeTables();
   renderFoodCounters();
   renderMapMode();

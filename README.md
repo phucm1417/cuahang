@@ -22,6 +22,12 @@ Mở [http://localhost:8000](http://localhost:8000) trong trình duyệt. Có th
 - Khách ăn khoảng 1,6 giây, để lại tiền rồi rời tiệm. Tiền cộng dồn trong một bong bóng xu; nhấn để nhân viên chạy nhanh tới nhặt.
 - Dùng xu nâng cấp tốc độ mời khách, danh tiếng hoặc sức chứa hàng chờ. Trong bếp có nâng cấp riêng cho số bếp, tốc độ nấu và tốc độ đầu bếp. Tiến độ được lưu trên trình duyệt.
 
+## Các khu vực
+
+- Nút chuyển map lần lượt đi qua **Nhà hàng → Bếp → Vườn → Tầng gác**. Mỗi khu vực có nền, nội thất và module xử lý riêng trong `maps/`, dùng chung tiền, danh vọng, lưu tiến độ và điều khiển của game.
+- Ở **Vườn**, chọn hạt giống ở thanh biểu tượng rồi chạm luống để trồng; chọn bình tưới rồi chạm cây để rút ngắn thời gian lớn. Chạm cây đã chín để thu hoạch. Khách ghé vườn sẽ gọi mua rau hoặc hoa; chạm bong bóng món hàng để bán. Nâng cấp vườn mở thêm luống.
+- **Tầng gác** có đàn piano, máy trò chơi và bàn giải trí. Chạm một món nội thất để bắt đầu trò chơi phản xạ; chạm các mục tiêu đang sáng để nhận xu và danh vọng. Khách đến tầng gác tự tham gia và trả xu khi rời đi.
+
 Ảnh nền và sprite nhân vật nằm trong thư mục dự án. Bàn và ghế là hai asset pixel art riêng trong `assets/`; khách ngồi ở ghế chính giữa phía trên bàn. Sprite nhân vật đã được cắt phần trong suốt thừa để hiển thị cân đối.
 
 Xem [HANDOFF.md](./HANDOFF.md) để biết trạng thái chi tiết và cách tiếp tục dự án khi chuyển tài khoản hoặc môi trường.
