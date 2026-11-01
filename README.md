@@ -33,6 +33,7 @@ Mở [http://localhost:8000](http://localhost:8000) trong trình duyệt. Có th
 Ảnh nền và sprite nhân vật nằm trong thư mục dự án. Bàn và ghế là hai asset pixel art riêng trong `assets/`; khách ngồi ở ghế chính giữa phía trên bàn. Sprite nhân vật đã được cắt phần trong suốt thừa để hiển thị cân đối.
 
 Xem [HANDOFF.md](./HANDOFF.md) để biết trạng thái chi tiết và cách tiếp tục dự án khi chuyển tài khoản hoặc môi trường.
+Quy chuẩn triển khai lâu dài nằm trong [AGENTS.md](./AGENTS.md); lộ trình nâng cấp gameplay, hình ảnh và hiệu ứng nằm trong [GAME_OVERHAUL_PLAN.md](./GAME_OVERHAUL_PLAN.md).
 
 ## Tương thích điện thoại và hướng đóng gói app
 
