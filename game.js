@@ -156,6 +156,7 @@
     hallFoodCounter: document.querySelector("#hall-food-counter"),
     hallFoodSlots: document.querySelector("#hall-food-slots"),
     mapToggle: document.querySelector("#map-toggle"),
+    areaSwitch: document.querySelector("#area-switch"),
     mapPicker: document.querySelector("#map-picker"),
     mapPickerNodes: document.querySelector("#map-picker-nodes"),
     guestLayer: document.querySelector("#guest-layer"),
@@ -207,6 +208,7 @@
     scenePropObstacles: [],
     layoutName: "desktop",
     mapMode: "restaurant",
+    journeyGuests: new Set(),
     muted: false,
     timers: new Set(),
   };
@@ -280,19 +282,17 @@
   }
 
   function initializeMapControllers() {
+    const economy = window.TiemNhoSystems.economy.create({
+      getMoney: () => state.money,
+      setMoney: (value) => { state.money = Math.max(0, Math.floor(value)); },
+      getReputation: () => state.reputationPoints,
+      setReputation: (value) => { state.reputationPoints = value; },
+      onChange: () => { render(); saveProgress(); },
+    });
     const context = {
-      spend(amount) {
-        if (state.money < amount) return false;
-        state.money -= amount;
-        render();
-        saveProgress();
-        return true;
-      },
+      spend: (amount) => economy.spend(amount),
       reward(amount, reputation) {
-        state.money += amount;
-        state.reputationPoints += reputation;
-        render();
-        saveProgress();
+        economy.earn(amount, reputation);
       },
       onChange() { render(); saveProgress(); },
       playSound: chime,
@@ -304,12 +304,7 @@
   }
 
   function initializeMapPicker() {
-    const positions = {
-      restaurant: [50, 55],
-      kitchen: [18, 79],
-      garden: [82, 55],
-      attic: [50, 17],
-    };
+    const positions = window.TiemNhoSystems.areas.mapNodes;
     el.mapPickerNodes.replaceChildren();
     MAP_ORDER.forEach((id) => {
       const definition = window.TiemNhoMaps.get(id);
@@ -338,13 +333,14 @@
     return Math.floor(value).toLocaleString("vi-VN");
   }
 
-  function chanceCost() { return 15 + state.chanceLevel * 20; }
-  function reputationCost() { return 35 + (state.reputationLevel - 1) * 45; }
-  function queueCost() { return 500 * 2 ** state.queueLevel; }
-  function kitchenStoveCost() { return 400 * 2 ** state.kitchenStoveLevel; }
-  function kitchenCookCost() { return 300 * 2 ** state.kitchenCookLevel; }
-  function kitchenChefCost() { return 350 * 2 ** state.kitchenChefSpeedLevel; }
-  function interiorCost(level) { return 500 * 2 ** level; }
+  function upgradeCost(kind, level) { return window.TiemNhoSystems.upgrades.cost(kind, level); }
+  function chanceCost() { return upgradeCost("chance", state.chanceLevel); }
+  function reputationCost() { return upgradeCost("reputation", state.reputationLevel); }
+  function queueCost() { return upgradeCost("queue", state.queueLevel); }
+  function kitchenStoveCost() { return upgradeCost("stoves", state.kitchenStoveLevel); }
+  function kitchenCookCost() { return upgradeCost("cooking", state.kitchenCookLevel); }
+  function kitchenChefCost() { return upgradeCost("chef", state.kitchenChefSpeedLevel); }
+  function interiorCost(level) { return upgradeCost("interior", level); }
   function kitchenStoveCount() { return 1 + state.kitchenStoveLevel; }
   function kitchenCookDuration() { return Math.max(550, Math.round(1450 * 0.88 ** state.kitchenCookLevel)); }
   function chancePerTap() { return Math.min(50, baseChancePerTap + state.chanceLevel * 5); }
@@ -486,6 +482,10 @@
     const inKitchen = state.mapMode === "kitchen";
     const inGarden = state.mapMode === "garden";
     const inAttic = state.mapMode === "attic";
+    const canWorkSwitch = window.TiemNhoSystems.mapNavigation.canDirectlySwitch(state.mapMode);
+    el.areaSwitch.hidden = !canWorkSwitch;
+    el.areaSwitch.setAttribute("aria-label", inKitchen ? "Về sảnh chính" : "Vào bếp");
+    el.areaSwitch.classList.toggle("is-return", inKitchen);
     el.roomScene.classList.toggle("is-kitchen", inKitchen);
     el.roomScene.classList.toggle("is-garden", inGarden);
     el.roomScene.classList.toggle("is-attic", inAttic);
@@ -512,7 +512,8 @@
       if (active) button.setAttribute("aria-current", "page");
       else button.removeAttribute("aria-current");
     });
-    el.invite.setAttribute("aria-label", inGarden ? "Đón khách đến vườn" : inAttic ? "Đón khách lên tầng gác" : "Mời khách");
+    el.invite.closest(".invite-wrap").hidden = inKitchen || inGarden || inAttic;
+    el.invite.setAttribute("aria-label", "Mời khách");
     if (el.upgradePanel.open) syncPanelLayout();
   }
 
@@ -644,12 +645,8 @@
     el.kitchenInteriorCost.textContent = kitchenNextFurniture ? coins(interiorCost(state.kitchenInteriorLevel)) : "MAX";
     el.kitchenInteriorUpgrade.disabled = !kitchenNextFurniture || state.money < interiorCost(state.kitchenInteriorLevel);
     renderMenu();
-    const isDestinationMap = state.mapMode === "garden" || state.mapMode === "attic";
-    el.invite.disabled = isDestinationMap
-      ? !mapControllers[state.mapMode]?.canVisit()
-      : state.guests.size + state.waitingQueue.length >= guestCapacity();
-    const inviteLabel = state.mapMode === "garden" ? "Đón khách đến vườn"
-      : state.mapMode === "attic" ? "Đón khách lên tầng gác" : "Mời khách";
+    el.invite.disabled = state.journeyGuests.size >= guestCapacity();
+    const inviteLabel = "Mời khách";
     el.invite.setAttribute("aria-label", el.invite.disabled
       ? "Hiện không thể đón thêm khách"
       : `${inviteLabel}, tiến độ ${state.inviteProgress} phần trăm, mỗi lần bấm tăng ${chancePerTap()} phần trăm`);
@@ -1568,14 +1565,12 @@
   }
 
   function inviteGuest() {
-    const isDestinationMap = state.mapMode === "garden" || state.mapMode === "attic";
-    const controller = mapControllers[state.mapMode];
-    if (isDestinationMap ? !controller?.canVisit() : state.guests.size + state.waitingQueue.length >= guestCapacity()) return;
+    if (state.mapMode !== "restaurant" || state.journeyGuests.size >= guestCapacity()) return;
     state.inviteProgress = Math.min(100, state.inviteProgress + chancePerTap());
     chime("invite");
     if (state.inviteProgress >= 100) {
       state.inviteProgress = 0;
-      if ((isDestinationMap ? controller.visit() : spawnGuest())) showInviteSuccess();
+      if (spawnGuest()) showInviteSuccess();
     }
     render();
   }
@@ -1598,9 +1593,12 @@
       ? randomItem(lockedMenu)
       : randomItem(availableMenu()));
     const dishIndex = menu.findIndex((item) => item === dish || item.name === dish.name);
-    return {
+    const identity = request || window.TiemNhoSystems.characters.createCustomer({
       id: `${Date.now()}-${Math.random()}`,
-      spriteFolder: request?.spriteFolder || randomItem(guestSprites),
+      spriteFolder: randomItem(guestSprites),
+    });
+    return {
+      ...identity,
       tableIndex: -1,
       dish,
       dishIndex,
@@ -1743,7 +1741,40 @@
 
   function spawnGuest(request = null) {
     if (state.waitingQueue.length && findFreeTable() !== -1) dispatchWaitingGuests();
-    const guest = createGuest(request);
+    const guest = request || createGuest();
+    if (!request) state.journeyGuests.add(guest);
+    const activity = window.TiemNhoSystems.journeys.current(guest);
+    if (activity !== "restaurant") {
+      showLobbyTransfer(guest, activity, () => runCustomerActivity(guest));
+      return true;
+    }
+    return admitRestaurantGuest(guest);
+  }
+
+  function showLobbyTransfer(guest, area, onArrive) {
+    if (state.mapMode !== "restaurant" || !window.TiemNhoSystems.mapNavigation.lobbyTransfers[area]) {
+      onArrive?.();
+      return;
+    }
+    const traveler = document.createElement("div");
+    traveler.className = "customer is-visible is-walking is-entering";
+    traveler.dataset.spriteFolder = guest.spriteFolder;
+    traveler.style.left = "50%";
+    traveler.style.top = "13%";
+    const sprite = document.createElement("img");
+    sprite.alt = "";
+    sprite.draggable = false;
+    sprite.src = spriteUrl(guest.spriteFolder, "south");
+    traveler.append(sprite);
+    el.guestLayer.append(traveler);
+    const route = window.TiemNhoSystems.mapNavigation.lobbyTransfers[area].map(([x, y]) => ({ x, y }));
+    moveCharacterAlong(traveler, sprite, { x: 50, y: 13 }, route, () => {
+      traveler.remove();
+      onArrive?.();
+    }, 0, "enter");
+  }
+
+  function admitRestaurantGuest(guest) {
     const tableIndex = findFreeTable();
     if (tableIndex !== -1 && state.waitingQueue.length === 0) {
       seatGuest(guest, tableIndex);
@@ -1755,6 +1786,27 @@
     render();
     chime();
     return true;
+  }
+
+  function runCustomerActivity(guest) {
+    const activity = window.TiemNhoSystems.journeys.current(guest);
+    if (!activity || !state.journeyGuests.has(guest)) return;
+    if (activity === "restaurant") {
+      if (!admitRestaurantGuest(guest)) schedule(() => runCustomerActivity(guest), 1200);
+      return;
+    }
+    const controller = mapControllers[activity];
+    if (!controller?.canVisit?.() || !controller.visitGuest(guest, () => {
+      window.TiemNhoSystems.journeys.advance(guest);
+      if (window.TiemNhoSystems.journeys.isComplete(guest)) {
+        state.journeyGuests.delete(guest);
+        render();
+        return;
+      }
+      const next = window.TiemNhoSystems.journeys.current(guest);
+      if (next !== "restaurant") showLobbyTransfer(guest, next, () => runCustomerActivity(guest));
+      else runCustomerActivity(guest);
+    })) schedule(() => runCustomerActivity(guest), 1200);
   }
 
   function deliverOrder(guest) {
@@ -2054,6 +2106,16 @@
       state.occupiedTables.delete(guest.tableIndex);
       state.guests.delete(guest.id);
       dispatchWaitingGuests();
+      if (state.journeyGuests.has(guest)) {
+        window.TiemNhoSystems.journeys.advance(guest);
+        if (window.TiemNhoSystems.journeys.isComplete(guest)) state.journeyGuests.delete(guest);
+        else schedule(() => {
+          const next = window.TiemNhoSystems.journeys.current(guest);
+          if (next !== "restaurant") showLobbyTransfer(guest, next, () => runCustomerActivity(guest));
+          else runCustomerActivity(guest);
+        }, 250);
+        render();
+      }
     }, route.length - 1, "exit");
   }
 
@@ -2153,6 +2215,15 @@
     chime("click");
     el.mapPicker.hidden = !el.mapPicker.hidden;
     el.mapToggle.setAttribute("aria-expanded", String(!el.mapPicker.hidden));
+  });
+  el.areaSwitch.addEventListener("click", () => {
+    if (!window.TiemNhoSystems.mapNavigation.canDirectlySwitch(state.mapMode)) return;
+    chime("click");
+    state.mapMode = window.TiemNhoSystems.mapNavigation.directWorkArea(state.mapMode);
+    el.mapPicker.hidden = true;
+    el.mapToggle.setAttribute("aria-expanded", "false");
+    renderMapMode();
+    render();
   });
   el.roomScene.addEventListener("pointerdown", (event) => {
     if (el.mapPicker.hidden || el.mapPicker.contains(event.target) || el.mapToggle.contains(event.target)) return;

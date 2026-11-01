@@ -1,11 +1,6 @@
 (() => {
   "use strict";
-  const crops = [
-    { id: "carrot", name: "Cà rốt", icon: "🥕", asset: "carrot.svg", seed: 5, price: 24, grow: 15000, fame: 2 },
-    { id: "tomato", name: "Cà chua", icon: "🍅", asset: "tomato.svg", seed: 7, price: 30, grow: 19000, fame: 3 },
-    { id: "flower", name: "Hoa cúc", icon: "🌼", asset: "daisy.svg", seed: 9, price: 38, grow: 23000, fame: 4 },
-    { id: "sunflower", name: "Hướng dương", icon: "🌻", asset: "sunflower.svg", seed: 12, price: 48, grow: 28000, fame: 5 },
-  ];
+  const crops = window.TiemNhoSystems.trade.crops;
   const positions = {
     desktop: [[0.28, 0.53], [0.50, 0.53], [0.72, 0.53], [0.28, 0.75], [0.50, 0.75], [0.72, 0.75]],
     mobile: [[0.247, 0.53], [0.50, 0.53], [0.753, 0.53], [0.247, 0.75], [0.50, 0.75], [0.753, 0.75]],
@@ -19,7 +14,8 @@
     let tickTimer = null;
     let plotNodes = [];
     let visitors = [];
-    const guestRoute = window.TiemNhoRoutes.routes.garden;
+    let buyerQueue = [];
+    const guestRoute = window.TiemNhoSystems.movement.routes.garden;
     let data = {
       level: Math.max(0, Math.min(2, Number(saved.level) || 0)),
       plots: Array.from({ length: 6 }, (_, index) => {
@@ -156,7 +152,8 @@
         button.querySelector("small").textContent = data.inventory[index];
       });
       visitors.forEach((visitor) => {
-        visitor.element.querySelector(".map-visitor__order").disabled = !visitor.arrived || data.inventory[crops.indexOf(visitor.crop)] < 1;
+        const order = visitor.element.querySelector(".map-visitor__order");
+        if (order) order.disabled = !visitor.arrived || buyerQueue[0] !== visitor || data.inventory[crops.indexOf(visitor.crop)] < 1;
       });
       waterButton.classList.toggle("is-selected", selectedTool === "water");
     }
@@ -171,7 +168,7 @@
     }
     function walkGuest(guest, points) {
       const routeId = ++guest.routeId;
-      return window.TiemNhoRoutes.walk(guest.element, points, layout, () => routeId !== guest.routeId);
+      return window.TiemNhoSystems.movement.walk(guest.element, points, layout, () => routeId !== guest.routeId);
     }
     async function sendGuestToGate(guest) {
       guest.departing = true;
@@ -231,9 +228,84 @@
       }, 25000);
       return true;
     }
+    function compactBuyerQueue() {
+      buyerQueue.forEach((guest, index) => {
+        guest.queueIndex = index;
+        if (guest.arrived && !guest.departing) walkGuest(guest, [queuePoint(index)]);
+      });
+      render();
+    }
+    function finishJourneyVisitor(guest, result = {}, alreadyAtGate = false) {
+      if (!visitors.includes(guest)) return;
+      visitors = visitors.filter((item) => item !== guest);
+      if (guest.buyer) buyerQueue = buyerQueue.filter((item) => item !== guest);
+      const order = guest.element.querySelector(".map-visitor__order");
+      if (order) order.disabled = true;
+      guest.departing = true;
+      const leave = async () => {
+        if (!alreadyAtGate) await walkGuest(guest, [guestRoute.market, guestRoute.junction, guestRoute.entrance]);
+        guest.element.remove();
+        compactBuyerQueue();
+        guest.onComplete?.(result);
+      };
+      leave();
+    }
+    async function wanderForActivity(guest) {
+      const routePoints = guestRoute.wander[layout === "portrait" ? "portrait" : "wide"];
+      const path = [guestRoute.entrance, guestRoute.junction];
+      const stops = 2 + Math.floor(Math.random() * 3);
+      for (let index = 0; index < stops; index += 1) path.push(routePoints[Math.floor(Math.random() * routePoints.length)]);
+      path.push(guestRoute.junction, guestRoute.entrance);
+      await walkGuest(guest, path);
+      if (!guest.departing) finishJourneyVisitor(guest, { purchased: false }, true);
+    }
+    async function welcomeJourneyGuest(guest) {
+      const path = guest.buyer
+        ? [guestRoute.entrance, guestRoute.junction, guestRoute.market, queuePoint(guest.queueIndex)]
+        : [guestRoute.entrance, guestRoute.junction];
+      await walkGuest(guest, path);
+      if (guest.departing) return;
+      guest.arrived = true;
+      render();
+      if (!guest.buyer) wanderForActivity(guest);
+    }
+    function visitGuest(customer, onComplete) {
+      if (!canVisit()) return false;
+      const buyer = Math.random() < 0.62 && buyerQueue.length < 3;
+      const crop = buyer ? crops[Math.floor(Math.random() * crops.length)] : null;
+      const guest = {
+        customer, crop, buyer, onComplete, element: document.createElement("div"), timer: null,
+        queueIndex: buyerQueue.length, arrived: false, routeId: 0, departing: false,
+      };
+      guest.element.className = `map-visitor garden-visitor ${buyer ? "is-buyer" : "is-wanderer"}`;
+      guest.element.innerHTML = `<img alt="" draggable="false">${buyer ? `<button type="button" class="map-visitor__order" aria-label="Mua ${crop.name} · ${crop.price} xu"><img src="./assets/maps/crops/${crop.asset}" alt=""><small>${crop.price}</small></button>` : ""}`;
+      guest.element.querySelector("img").src = `./assets/sprites/${customer.spriteFolder}/south.png`;
+      const order = guest.element.querySelector(".map-visitor__order");
+      order?.addEventListener("click", () => {
+        const index = crops.findIndex((item) => item.id === crop.id);
+        if (buyerQueue[0] !== guest || data.inventory[index] < 1) return;
+        data.inventory[index] -= 1;
+        window.clearTimeout(guest.timer);
+        context.reward?.(crop.price + data.level * 4, crop.fame + Math.floor(data.level / 2));
+        context.playSound?.("coin");
+        changed();
+        finishJourneyVisitor(guest, { purchased: true });
+      });
+      visitorLayer.append(guest.element);
+      visitors.push(guest);
+      if (buyer) buyerQueue.push(guest);
+      const entrance = layout === "portrait" ? guestRoute.entrance.portrait : guestRoute.entrance.wide;
+      guest.element.style.left = `${entrance[0]}%`;
+      guest.element.style.top = `${entrance[1]}%`;
+      guest.element.style.opacity = "0";
+      requestAnimationFrame(() => { guest.element.style.opacity = "1"; });
+      welcomeJourneyGuest(guest);
+      guest.timer = window.setTimeout(() => finishJourneyVisitor(guest, { purchased: false }), buyer ? 35000 : 20000);
+      return true;
+    }
     function upgrade() {
       if (data.level >= 2) return false;
-      const cost = 500 * 2 ** data.level;
+      const cost = window.TiemNhoSystems.upgrades.cost("garden", data.level);
       if (!context.spend?.(cost)) return false;
       data.level += 1;
       changed();
@@ -243,11 +315,11 @@
       return {
         level: data.level,
         max: 2,
-        cost: data.level >= 2 ? null : 500 * 2 ** data.level,
+        cost: data.level >= 2 ? null : window.TiemNhoSystems.upgrades.cost("garden", data.level),
         detail: data.level >= 2 ? "Đã mở đủ luống trồng" : `Mở thêm luống trồng · ${activePlotCount()} luống`,
       };
     }
-    function canVisit() { return visitors.length < 3; }
+    function canVisit() { return visitors.length < 8; }
     function setLayout(next) {
       if (next === layout) return;
       layout = next;
@@ -268,7 +340,7 @@
     }
     createPlots();
     render();
-    return { visit, canVisit, upgrade, renderUpgrade, setLayout, setActive, serialize };
+    return { visitGuest, canVisit, upgrade, renderUpgrade, setLayout, setActive, serialize };
   }
 
   window.TiemNhoMaps.register({

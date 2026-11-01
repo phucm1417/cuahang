@@ -6,14 +6,22 @@
     <meta name="theme-color" content="#f6eed9" />
     <meta name="description" content="Quản lý nhà hàng pixel art: mời khách, phục vụ món và phát triển danh tiếng." />
     <title>Tiệm Nhỏ — Nhà hàng của bạn</title>
-    <link rel="stylesheet" href="./styles.css?v=55" />
-    <script src="./maps/registry.js?v=55" defer></script>
-    <script src="./maps/routes.js?v=55" defer></script>
-    <script src="./maps/restaurant.js?v=55" defer></script>
-    <script src="./maps/kitchen.js?v=55" defer></script>
-    <script src="./maps/garden.js?v=55" defer></script>
-    <script src="./maps/attic.js?v=55" defer></script>
-    <script src="./game.js?v=55" defer></script>
+    <link rel="stylesheet" href="./styles.css?v=56" />
+    <script src="./maps/registry.js?v=56" defer></script>
+    <script src="./systems/areas.js?v=56" defer></script>
+    <script src="./systems/characters.js?v=56" defer></script>
+    <script src="./systems/journeys.js?v=56" defer></script>
+    <script src="./systems/map-navigation.js?v=56" defer></script>
+    <script src="./systems/economy.js?v=56" defer></script>
+    <script src="./systems/upgrades.js?v=56" defer></script>
+    <script src="./systems/trade.js?v=56" defer></script>
+    <script src="./systems/games.js?v=56" defer></script>
+    <script src="./systems/movement.js?v=56" defer></script>
+    <script src="./maps/restaurant.js?v=56" defer></script>
+    <script src="./maps/kitchen.js?v=56" defer></script>
+    <script src="./maps/garden.js?v=56" defer></script>
+    <script src="./maps/attic.js?v=56" defer></script>
+    <script src="./game.js?v=56" defer></script>
   </head>
   <body>
     <main class="game-shell">
@@ -51,8 +59,11 @@
               <button class="map-toggle" id="map-toggle" type="button" aria-label="Mở bản đồ khu vực" aria-expanded="false" aria-controls="map-picker">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15m6-12v15"/><circle cx="6" cy="11" r="1.2"/><circle cx="15" cy="10" r="1.2"/></svg>
               </button>
+              <button class="area-switch" id="area-switch" type="button" aria-label="Chuyển giữa sảnh chính và bếp">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/><path d="M4 5v14"/></svg>
+              </button>
               <div class="map-picker" id="map-picker" aria-label="Các khu vực" hidden>
-                <svg class="map-picker__routes" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 54V20M54 58h28M47 59 20 77"/></svg>
+                <svg class="map-picker__routes" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 48H17M50 48H83M50 52V83"/></svg>
                 <div class="map-picker__nodes" id="map-picker-nodes"></div>
               </div>
               <div class="table-layer" id="table-layer" aria-hidden="true"></div>

@@ -24,10 +24,11 @@ Mở [http://localhost:8000](http://localhost:8000) trong trình duyệt. Có th
 
 ## Các khu vực
 
-- Nút chuyển map lần lượt đi qua **Nhà hàng → Bếp → Vườn → Tầng gác**. Mỗi khu vực có nền, nội thất và module xử lý riêng trong `maps/`, dùng chung tiền, danh vọng, lưu tiến độ và điều khiển của game.
+- Sảnh chính là lối vào duy nhất của khách. Bản đồ thu nhỏ đặt sảnh ở giữa, vườn bên trái, bếp bên phải và tầng gác phía dưới. Chọn biểu tượng trên bản đồ để tới bất kỳ khu vực nào; nút mũi tên cạnh bản đồ chuyển nhanh riêng giữa sảnh và bếp.
 - Ở **Vườn**, chọn hạt giống ở thanh biểu tượng rồi chạm luống để trồng; chọn bình tưới rồi chạm cây để rút ngắn thời gian lớn. Chạm cây đã chín để thu hoạch. Khách ghé vườn sẽ gọi mua rau hoặc hoa; chạm bong bóng món hàng để bán. Nâng cấp vườn mở thêm luống.
 - **Tầng gác** có đàn piano, máy trò chơi và bàn giải trí. Chạm một món nội thất để bắt đầu trò chơi phản xạ; chạm các mục tiêu đang sáng để nhận xu và danh vọng. Khách đến tầng gác tự tham gia và trả xu khi rời đi.
-- Nút biểu tượng bản đồ mở sơ đồ thu nhỏ để chọn nhanh bốn khu vực. Sảnh là điểm trung tâm; vườn nối bằng lối cổng, tầng gác nối bằng cầu thang, còn bếp là nhánh phục vụ nội bộ. Khách đi theo lối vào, điểm dừng và đường quay ra đã định sẵn trong `maps/routes.js`.
+- Mỗi lần mời khách bắt đầu tại sảnh và tạo một nhân vật có danh tính, sprite cùng lịch trình ngẫu nhiên gồm 1–3 hoạt động khác nhau. Khách có thể ăn ở sảnh, mua hoặc dạo vườn, rồi giải trí ở tầng gác theo thứ tự ngẫu nhiên. Khách ăn không có bàn sẽ xếp hàng ở sảnh; khách mua hàng xếp hàng riêng tại quầy vườn; khách chỉ tham quan sẽ đi dạo ngẫu nhiên.
+- Lõi xử lý được chia thành các module trong `systems/`: nhân vật và lịch trình (`characters.js`, `journeys.js`), di chuyển (`movement.js`), khu vực và định tuyến (`areas.js`, `map-navigation.js`), tiền và nâng cấp (`economy.js`, `upgrades.js`), mua bán (`trade.js`) và mini game (`games.js`). Mỗi bản đồ tiếp tục có controller riêng trong `maps/`.
 
 Ảnh nền và sprite nhân vật nằm trong thư mục dự án. Bàn và ghế là hai asset pixel art riêng trong `assets/`; khách ngồi ở ghế chính giữa phía trên bàn. Sprite nhân vật đã được cắt phần trong suốt thừa để hiển thị cân đối.
 
