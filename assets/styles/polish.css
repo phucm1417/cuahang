@@ -1,0 +1,66 @@
+/* Storybook finish: calm paper UI around a vivid, touchable play space. */
+:root {
+  --ink: #3d3429;
+  --ink-soft: #776d5d;
+  --cream: #f7f0df;
+  --paper: #fffdf6;
+  --sage: #78936c;
+  --sage-deep: #4f704c;
+  --orange: #c9824a;
+  --gold: #e9bd5d;
+  --line: #e6dcc6;
+  --shadow: 0 18px 48px rgb(76 56 31 / 12%);
+}
+body {
+  background:
+    radial-gradient(ellipse at 12% 8%, rgb(216 230 203 / 54%), transparent 32rem),
+    radial-gradient(ellipse at 90% 2%, rgb(247 220 164 / 48%), transparent 29rem),
+    linear-gradient(180deg, #faf6e9, #f2ebd9);
+}
+.game-shell { width: min(1520px, calc(100% - 48px)); padding-top: 18px; }
+.topbar { min-height: 72px; }
+.brand-icon { border-color: #e5d3ac; border-radius: 17px 17px 17px 8px; background: linear-gradient(145deg, #fffdf2, #f3e5c4); box-shadow: 0 6px 16px rgb(103 77 39 / 9%), inset 0 1px 0 #fff; }
+.brand strong { letter-spacing: -.65px; }
+.stat-pill { border-color: rgb(224 211 182 / 78%); border-radius: 17px; background: rgb(255 253 246 / 88%); box-shadow: inset 0 1px 0 #fff, 0 5px 16px rgb(92 70 40 / 5%); }
+.sound-button, .upgrade-open-button { border-color: #e4d9c3; background: linear-gradient(145deg, #fffdf7, #f4eddc); box-shadow: 0 5px 14px rgb(81 61 33 / 8%), inset 0 1px 0 white; }
+.play-panel { padding: 14px; border-color: rgb(218 204 174 / 74%); border-radius: 27px; background: linear-gradient(145deg, #fffdf7, #f4eedf); box-shadow: 0 20px 54px rgb(67 49 27 / 14%), inset 0 1px 0 white; }
+.room-frame { border: 1px solid rgb(119 93 53 / 19%); border-radius: 20px; background: #e6dbc2; box-shadow: inset 0 0 0 4px rgb(255 252 238 / 73%), 0 5px 16px rgb(61 47 29 / 12%); }
+.room-scene { border-radius: 15px; }
+.room-scene::before { position: absolute; z-index: 1; inset: 0; border: 1px solid rgb(255 252 229 / 25%); border-radius: inherit; background: linear-gradient(135deg, rgb(255 246 211 / 7%), transparent 42%, rgb(65 48 31 / 5%)); content: ""; pointer-events: none; }
+.room-vignette { background: linear-gradient(180deg, rgb(255 249 223 / 4%), transparent 46%, rgb(81 65 41 / 13%)); }
+.menu-open-button, .invite-button, .map-toggle, .area-switch, .map-picker__node { box-shadow: 0 8px 20px rgb(58 43 25 / 20%), inset 0 1px 0 rgb(255 255 255 / 82%); }
+.invite-button { border-color: #fff8df; background: radial-gradient(circle at 34% 25%, #fff4c7, #e7bd60 68%, #d9a94c); color: #69502b; }
+.invite-button:not(:disabled):hover { transform: translateY(-3px) scale(1.035); }
+.menu-open-button { border-color: rgb(255 249 230 / 90%); background: linear-gradient(145deg, #fffdf4, #eee0bd); }
+.upgrade-open-button { transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s; }
+.upgrade-open-button:hover { transform: translateY(-2px) rotate(-4deg); box-shadow: 0 8px 18px rgb(81 61 33 / 14%); }
+dialog.upgrade-panel { border-color: rgb(174 148 101 / 34%); border-radius: 25px; background: linear-gradient(145deg, rgb(255 254 247 / 96%), rgb(246 239 221 / 95%)); box-shadow: 0 22px 70px rgb(49 39 27 / 27%), inset 0 0 0 4px rgb(255 255 255 / 52%); }
+.upgrade-card { border-color: #e6dcc6; border-radius: 18px; background: linear-gradient(145deg, #fffefa, #f8f2e5); box-shadow: 0 5px 14px rgb(78 58 31 / 5%), inset 0 1px 0 white; transition: transform .16s, box-shadow .16s, border-color .16s; }
+.upgrade-card:not(:disabled):hover { transform: translateY(-2px); border-color: #d4bd84; box-shadow: 0 9px 20px rgb(78 58 31 / 10%); }
+.menu-item { border-color: #e8deca; border-radius: 16px; background: linear-gradient(145deg, #fffefa, #f8f2e4); }
+.menu-food { border-radius: 12px; background: radial-gradient(circle, #fff8e6, #f4ead1); }
+.food-counter { filter: drop-shadow(0 7px 8px rgb(54 43 31 / 20%)); }
+.food-counter-item { border-color: rgb(255 255 255 / 88%); background: radial-gradient(circle at 40% 35%, #fffdf4, #eee0bb); box-shadow: 0 3px 8px rgb(65 49 30 / 25%); }
+.customer img, .staff img, .chef img, .waiting-guest img, .map-visitor > img { filter: drop-shadow(0 3px 2px rgb(53 42 31 / 24%)); }
+.customer.is-seated img { animation: seated-breathe 2.8s ease-in-out infinite; }
+.map-visitor { filter: drop-shadow(0 4px 5px rgb(53 42 31 / 14%)); }
+.map-visitor__order { border-color: #fffaf0; background: linear-gradient(145deg, #fffdf4, #f3e5c4); transition: transform .18s, box-shadow .18s; }
+.map-visitor__order:not(:disabled):hover { transform: translateY(-3px) scale(1.08); box-shadow: 0 8px 18px rgb(65 49 28 / 24%); }
+.effects-layer { position: absolute; z-index: 19; inset: 0; overflow: hidden; pointer-events: none; }
+.effect-particle { position: absolute; width: 8px; height: 8px; border: 1px solid rgb(105 75 37 / 25%); border-radius: 42% 58% 47% 53%; background: var(--fx-color); box-shadow: 0 1px 3px rgb(68 49 27 / 16%); opacity: 0; animation: reward-spark 680ms cubic-bezier(.16,.72,.25,1) var(--fx-delay, 0ms) both; }
+.effect-particle--coin { width: 7px; height: 9px; border-radius: 50%; }
+.effect-particle--leaf { width: 9px; height: 6px; border-radius: 100% 0 100% 0; }
+.effect-particle--upgrade { width: 6px; height: 6px; border-radius: 50%; }
+@keyframes reward-spark { 0% { opacity: 0; transform: translate(0, 0) scale(.35) rotate(0); } 18% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--fx-x), var(--fx-y)) scale(.7) rotate(150deg); } }
+.is-fx-success { animation: soft-success-pulse 480ms ease-out; }
+@keyframes soft-success-pulse { 40% { filter: drop-shadow(0 0 12px rgb(255 225 140 / 90%)); } }
+.is-fx-error { animation: soft-error-pulse 480ms ease-out; }
+@keyframes soft-error-pulse { 40% { filter: drop-shadow(0 0 10px rgb(220 128 108 / 68%)); } }
+@media (max-width: 600px) {
+  .game-shell { width: 100%; }
+  .play-panel { padding: 8px; border-radius: 18px; }
+  .room-frame { border-radius: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

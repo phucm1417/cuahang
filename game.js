@@ -3,76 +3,22 @@
 
   const STORAGE_KEY = "tiem-nho-save-v1";
   const MAP_ORDER = window.TiemNhoMaps.list();
-  const guestSprites = ["Idle_2", "Idle_3", "Idle_4", "Idle_5", "Idle_6", "Idle_7", "Idle_8", "Idle_9", "Idle_10", "Idle_12"];
-  const menu = [
-    { name: "Súp nấm", icon: "🍲", sprite: "./assets/sprite-library/food/mushroom-soup.svg", price: 16 },
-    { name: "Mì rau củ", icon: "🍜", sprite: "./assets/sprite-library/food/garden-noodles.svg", price: 20 },
-    { name: "Bánh táo", icon: "🥧", sprite: "./assets/sprite-library/food/apple-pie.svg", price: 24 },
-    { name: "Trà mật ong", icon: "🫖", sprite: "./assets/sprite-library/food/honey-tea.svg", price: 18 },
-    { name: "Cơm trắng", sprite: "./restaurant-sprites/large/com_trang.png", price: 18 },
-    { name: "Trứng ốp la", sprite: "./restaurant-sprites/large/trung_op_la.png", price: 18 },
-    { name: "Đậu hũ sốt cà", sprite: "./restaurant-sprites/large/dau_hu_sot_ca.png", price: 18 },
-    { name: "Canh rau", sprite: "./restaurant-sprites/large/canh_rau.png", price: 18 },
-    { name: "Dưa leo", sprite: "./restaurant-sprites/large/dua_leo.png", price: 18 },
-    { name: "Bánh bao", sprite: "./restaurant-sprites/large/banh_bao.png", price: 18 },
-    { name: "Bánh mì", sprite: "./restaurant-sprites/large/banh_mi.png", price: 18 },
-    { name: "Bánh xèo", sprite: "./restaurant-sprites/large/banh_xeo.png", price: 18 },
-    { name: "Phở bò", sprite: "./restaurant-sprites/large/pho_bo.png", price: 18 },
-    { name: "Chè", sprite: "./restaurant-sprites/large/che.png", price: 18 },
-    { name: "Cà phê sữa đá", sprite: "./restaurant-sprites/large/ca_phe.png", price: 18 },
-    { name: "Dưa hấu", sprite: "./restaurant-sprites/large/dua_hau.png", price: 18 },
-    { name: "Bánh flan", sprite: "./restaurant-sprites/large/banh_flan.png", price: 18 },
-    { name: "Xôi xéo", sprite: "./restaurant-sprites/large/xoi_xeo.png", price: 18 },
-    { name: "Xôi gấc", sprite: "./restaurant-sprites/large/xoi_gac.png", price: 18 },
-    { name: "Bún bò Huế", sprite: "./restaurant-sprites/large/bun_bo_hue.png", price: 18 },
-    { name: "Bún riêu", sprite: "./restaurant-sprites/large/bun_rieu.png", price: 18 },
-    { name: "Bún chả", sprite: "./restaurant-sprites/large/bun_cha.png", price: 18 },
-    { name: "Mì Quảng", sprite: "./restaurant-sprites/large/mi_quang.png", price: 18 },
-    { name: "Cơm tấm", sprite: "./restaurant-sprites/large/com_tam.png", price: 18 },
-    { name: "Gỏi cuốn", sprite: "./restaurant-sprites/large/goi_cuon.png", price: 18 },
-    { name: "Chả giò", sprite: "./restaurant-sprites/large/cha_gio.png", price: 18 },
-    { name: "Bánh cuốn", sprite: "./restaurant-sprites/large/banh_cuon.png", price: 18 },
-    { name: "Bánh canh", sprite: "./restaurant-sprites/large/banh_canh.png", price: 18 },
-    { name: "Hủ tiếu", sprite: "./restaurant-sprites/large/hu_tieu.png", price: 18 },
-    { name: "Lẩu", sprite: "./restaurant-sprites/large/lau.png", price: 18 },
-    { name: "Cá kho tộ", sprite: "./restaurant-sprites/large/ca_kho.png", price: 18 },
-    { name: "Thịt kho trứng", sprite: "./restaurant-sprites/large/thit_kho_trung.png", price: 18 },
-    { name: "Gà nướng", sprite: "./restaurant-sprites/large/ga_nuong.png", price: 18 },
-    { name: "Sườn nướng", sprite: "./restaurant-sprites/large/suon_nuong.png", price: 18 },
-    { name: "Bò lúc lắc", sprite: "./restaurant-sprites/large/bo_luc_lac.png", price: 18 },
-    { name: "Mực xào", sprite: "./restaurant-sprites/large/muc_xao.png", price: 18 },
-    { name: "Tôm rang", sprite: "./restaurant-sprites/large/tom_rang.png", price: 18 },
-    { name: "Cá chiên", sprite: "./restaurant-sprites/large/ca_chien.png", price: 18 },
-    { name: "Nem nướng", sprite: "./restaurant-sprites/large/nem_nuong.png", price: 18 },
-    { name: "Bò bía", sprite: "./restaurant-sprites/large/bo_bia.png", price: 18 },
-    { name: "Bánh tráng trộn", sprite: "./restaurant-sprites/large/banh_trang_tron.png", price: 18 },
-    { name: "Sinh tố bơ", sprite: "./restaurant-sprites/large/sinh_to_bo.png", price: 18 },
-    { name: "Sinh tố xoài", sprite: "./restaurant-sprites/large/sinh_to_xoai.png", price: 18 },
-    { name: "Nước cam", sprite: "./restaurant-sprites/large/nuoc_cam.png", price: 18 },
-    { name: "Trà đào", sprite: "./restaurant-sprites/large/tra_dao.png", price: 18 },
-    { name: "Trà sữa trân châu", sprite: "./restaurant-sprites/large/tra_sua.png", price: 18 },
-    { name: "Nước dừa", sprite: "./restaurant-sprites/large/nuoc_dua.png", price: 18 },
-    { name: "Sữa đậu nành", sprite: "./restaurant-sprites/large/sua_dau_nanh.png", price: 18 },
-    { name: "Bia", sprite: "./restaurant-sprites/large/bia.png", price: 18 },
-    { name: "Trà đá", sprite: "./restaurant-sprites/large/tra_da.png", price: 18 },
-    { name: "Kem dừa", sprite: "./restaurant-sprites/large/kem_dua.png", price: 18 },
-    { name: "Bánh da lợn", sprite: "./restaurant-sprites/large/banh_da_lon.png", price: 18 },
-    { name: "Bánh chuối", sprite: "./restaurant-sprites/large/banh_chuoi.png", price: 18 },
-    { name: "Khoai lang", sprite: "./restaurant-sprites/large/khoai_lang.png", price: 18 },
-    { name: "Bắp nướng", sprite: "./restaurant-sprites/large/bap_nuong.png", price: 18 },
-  ];
-  const baseChancePerTap = 25;
-  const maxChanceLevel = 5;
-  const maxReputationLevel = 10;
-  const menuUnlockBaseCost = 30;
-  const menuUnlockGrowth = 1.28;
-  const menuSaleGrowth = 1.75;
-  const lockedDishRequestChance = 0.1;
-  const positiveMoodChance = 0.25;
-  const positiveMoods = ["love", "happy", "joy"];
-  const hallFurnitureNames = ["quầy thu ngân", "hũ tiền tip", "bàn trà", "chậu cây bên trái", "chậu cây bên phải", "thảm sảnh", "cửa sổ sảnh"];
-  const kitchenFurnitureNames = ["cửa sổ bếp", "tủ bếp treo", "kệ nguyên liệu", "giá treo dụng cụ", "bàn sơ chế", "tủ lạnh", "thùng rác", "thảm chống trượt"];
-  const negativeMoods = ["angry", "confused"];
+  const catalog = window.TiemNhoSystems.catalog;
+  const tuning = catalog.tuning;
+  const guestSprites = catalog.guestSprites;
+  const menu = window.TiemNhoSystems.catalog.menu;
+  const baseChancePerTap = tuning.invitePerTap;
+  const maxChanceLevel = tuning.maxInviteUpgrade;
+  const maxReputationLevel = tuning.maxReputationUpgrade;
+  const menuUnlockBaseCost = tuning.menuUnlockBaseCost;
+  const menuUnlockGrowth = tuning.menuUnlockGrowth;
+  const menuSaleGrowth = tuning.menuSaleGrowth;
+  const lockedDishRequestChance = tuning.lockedDishRequestChance;
+  const positiveMoodChance = tuning.positiveMoodChance;
+  const positiveMoods = tuning.positiveMoods;
+  const hallFurnitureNames = catalog.furniture.hall;
+  const kitchenFurnitureNames = catalog.furniture.kitchen;
+  const negativeMoods = tuning.negativeMoods;
   const emotionArt = {
     love: '<path d="M16 26C8 20 4 16 4 11.5 4 8 6.5 6 9.5 6c2.7 0 5.1 1.6 6.5 4 1.4-2.4 3.8-4 6.5-4 3 0 5.5 2 5.5 5.5C28 16 24 20 16 26Z" fill="#f4b3b0" stroke="#6b5636" stroke-width="2" stroke-linejoin="round"/><path d="M9 11q1.5-1.8 3.5-2" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round"/>',
     happy: '<circle cx="16" cy="16" r="11.5" fill="#ffe08a" stroke="#6b5636" stroke-width="2"/><path d="M10 14q1.5-2 3 0m6 0q1.5-2 3 0M11 19q5 4.5 10 0" stroke="#6b5636" stroke-width="2" fill="none" stroke-linecap="round"/><ellipse cx="8.5" cy="18" rx="1.8" ry="1.2" fill="#f19b8c"/><ellipse cx="23.5" cy="18" rx="1.8" ry="1.2" fill="#f19b8c"/>',
@@ -161,6 +107,7 @@
     mapPickerNodes: document.querySelector("#map-picker-nodes"),
     guestLayer: document.querySelector("#guest-layer"),
     orderLayer: document.querySelector("#order-layer"),
+    effectsLayer: document.querySelector("#effects-layer"),
     waitingQueue: document.querySelector("#waiting-queue"),
     paymentLayer: document.querySelector("#payment-layer"),
     staff: document.querySelector("#staff"),
@@ -174,44 +121,21 @@
     testResetGame: document.querySelector("#test-reset-game"),
   };
 
-  const state = {
-    money: 0,
-    reputationPoints: 100,
-    chanceLevel: 0,
-    reputationLevel: 1,
-    queueLevel: 0,
-    kitchenStoveLevel: 0,
-    kitchenCookLevel: 0,
-    kitchenChefSpeedLevel: 0,
-    hallInteriorLevel: 0,
-    kitchenInteriorLevel: 0,
-    unlockedMenuCount: 1,
-    gardenData: null,
-    atticData: null,
-    inviteProgress: 0,
-    guests: new Map(),
-    waitingQueue: [],
-    queueMarkers: new Map(),
-    pendingPayments: new Map(),
-    paymentButtons: new Map(),
-    entryDoorTransitCount: 0,
-    servingGuest: null,
-    staffTaskQueue: [],
-    chefTaskQueue: [],
-    kitchenFoodQueue: [],
-    diningFoodQueue: [],
-    chefWorking: false,
-    moneyPickupInProgress: false,
-    pendingCoins: 0,
-    tableSeats: [],
-    occupiedTables: new Map(),
-    scenePropObstacles: [],
-    layoutName: "desktop",
-    mapMode: "restaurant",
-    journeyGuests: new Set(),
-    muted: false,
-    timers: new Set(),
-  };
+  const state = window.TiemNhoSystems.state.create();
+  const progressStore = window.TiemNhoSystems.storage.createProgressStore({ key: STORAGE_KEY });
+  const audioService = window.TiemNhoSystems.audio.create();
+  const effects = window.TiemNhoSystems.effects.create(el.effectsLayer, el.roomScene);
+  const economy = window.TiemNhoSystems.economy.create({
+    getMoney: () => state.money,
+    setMoney: (value) => { state.money = Math.max(0, Math.floor(value)); },
+    getReputation: () => state.reputationPoints,
+    setReputation: (value) => { state.reputationPoints = Math.max(0, Number(value) || 0); },
+  });
+  const diningRoom = window.TiemNhoSystems.restaurant.createDiningRoom({
+    getTableCount: () => unlockedTableCount(),
+    getQueueLimit: () => waitingQueueLimit(),
+    occupiedTables: state.occupiedTables,
+  });
   const staffMotion = {
     x: 53,
     y: 31,
@@ -234,68 +158,33 @@
   let mapControllers = {};
 
   function loadProgress() {
-    try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
-      if (!saved) return;
-      state.money = Math.max(0, Math.floor(Number(saved.money) || 0));
-      const savedReputationPoints = Number(saved.reputationPoints);
-      if (Number.isFinite(savedReputationPoints)) {
-        state.reputationPoints = Math.max(0, savedReputationPoints);
-      }
-      state.chanceLevel = Math.min(maxChanceLevel, Math.max(0, Math.floor(Number(saved.chanceLevel) || 0)));
-      state.reputationLevel = Math.min(maxReputationLevel, Math.max(1, Math.floor(Number(saved.reputationLevel) || 1)));
-      state.queueLevel = Math.max(0, Math.floor(Number(saved.queueLevel) || 0));
-      state.kitchenStoveLevel = Math.min(5, Math.max(0, Math.floor(Number(saved.kitchenStoveLevel) || 0)));
-      state.kitchenCookLevel = Math.min(10, Math.max(0, Math.floor(Number(saved.kitchenCookLevel) || 0)));
-      state.kitchenChefSpeedLevel = Math.min(10, Math.max(0, Math.floor(Number(saved.kitchenChefSpeedLevel) || 0)));
-      state.hallInteriorLevel = Math.min(7, Math.max(0, Math.floor(Number(saved.hallInteriorLevel) || 0)));
-      state.kitchenInteriorLevel = Math.min(8, Math.max(0, Math.floor(Number(saved.kitchenInteriorLevel) || 0)));
-      state.unlockedMenuCount = Math.min(menu.length, Math.max(1, Math.floor(Number(saved.unlockedMenuCount) || 1)));
-      state.gardenData = saved.gardenData || null;
-      state.atticData = saved.atticData || null;
-    } catch {
-      // The game remains playable when browser storage is unavailable or malformed.
-    }
+    const saved = progressStore.read();
+    if (!saved) return;
+    window.TiemNhoSystems.state.restore(state, saved, {
+      menuLength: menu.length,
+      limits: { chance: maxChanceLevel, reputation: maxReputationLevel, stoves: 5, cooking: 10, chef: 10, hallInterior: 7, kitchenInterior: 8 },
+    });
   }
 
   function saveProgress() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        money: state.money,
-        reputationPoints: state.reputationPoints,
-        chanceLevel: state.chanceLevel,
-        reputationLevel: state.reputationLevel,
-        queueLevel: state.queueLevel,
-        kitchenStoveLevel: state.kitchenStoveLevel,
-        kitchenCookLevel: state.kitchenCookLevel,
-        kitchenChefSpeedLevel: state.kitchenChefSpeedLevel,
-        hallInteriorLevel: state.hallInteriorLevel,
-        kitchenInteriorLevel: state.kitchenInteriorLevel,
-        unlockedMenuCount: state.unlockedMenuCount,
+    const saved = progressStore.write(window.TiemNhoSystems.state.serialize(state, {
         gardenData: mapControllers.garden?.serialize?.() || state.gardenData,
         atticData: mapControllers.attic?.serialize?.() || state.atticData,
-      }));
+    }));
+    if (saved) {
       el.saveStatus.innerHTML = '<span class="save-check" aria-hidden="true">✓</span> Tiến độ được lưu tự động';
-    } catch {
+    } else {
       el.saveStatus.innerHTML = '<span class="save-check" aria-hidden="true">✓</span> Có thể tiếp tục chơi trên trang này';
     }
   }
 
   function initializeMapControllers() {
-    const economy = window.TiemNhoSystems.economy.create({
-      getMoney: () => state.money,
-      setMoney: (value) => { state.money = Math.max(0, Math.floor(value)); },
-      getReputation: () => state.reputationPoints,
-      setReputation: (value) => { state.reputationPoints = value; },
-      onChange: () => { render(); saveProgress(); },
-    });
     const context = {
       spend: (amount) => economy.spend(amount),
-      reward(amount, reputation) {
-        economy.earn(amount, reputation);
-      },
+      reward: (amount, reputation) => economy.earn(amount, reputation),
       onChange() { render(); saveProgress(); },
       playSound: chime,
+      effect: (kind, target) => effects.burstAt(target, kind),
       getLayout: () => state.layoutName,
     };
     mapControllers.garden = window.TiemNhoMaps.get("garden").create(el.gardenMapLayer, context, state.gardenData || {});
@@ -366,20 +255,15 @@
   }
   function unlockedTableCount() { return Math.min(6, state.reputationLevel); }
   function waitingQueueLimit() { return 2 + state.queueLevel; }
-  function findFreeTable() {
-    for (let index = 0; index < unlockedTableCount(); index += 1) {
-      if (!state.occupiedTables.has(index)) return index;
-    }
-    return -1;
-  }
-  function guestCapacity() { return unlockedTableCount() + waitingQueueLimit(); }
+  function findFreeTable() { return diningRoom.findFreeTable(); }
+  function guestCapacity() { return diningRoom.capacity(); }
 
   function purchaseMenuItem(index) {
     if (index !== state.unlockedMenuCount || index >= menu.length) return;
     const cost = menuUnlockCost(index);
-    if (state.money < cost) return;
-    state.money -= cost;
+    if (!economy.spend(cost)) return;
     state.unlockedMenuCount += 1;
+    effects.burstAt(el.menuList.children[index], "upgrade");
     render();
     saveProgress();
     chime("coin");
@@ -936,6 +820,7 @@
     guest.dom.dish.replaceChildren(dishSprite);
     guest.dom.dish.setAttribute("aria-label", guest.dish.name);
     guest.dom.dish.classList.add("is-visible");
+    effects.burstAt(guest.dom.dish, "food");
     chime("serve");
     schedule(() => finishMeal(guest), 1600);
   }
@@ -1135,44 +1020,7 @@
   }
 
   function chime(kind = "soft") {
-    if (state.muted) return;
-    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContextClass) return;
-    try {
-      const context = new AudioContextClass();
-      const now = context.currentTime;
-      const sound = {
-        soft: { notes: [523, 659], wave: "sine", step: 0.12, length: 0.21, volume: 0.07 },
-        click: { notes: [430], wave: "sine", step: 0.04, length: 0.09, volume: 0.035 },
-        invite: { notes: [440, 587], wave: "triangle", step: 0.075, length: 0.14, volume: 0.045 },
-        order: { notes: [587, 740, 880], wave: "triangle", step: 0.08, length: 0.15, volume: 0.05 },
-        cook: { notes: [330, 392, 494], wave: "sine", step: 0.11, length: 0.24, volume: 0.045 },
-        transfer: { notes: [784, 659], wave: "sine", step: 0.07, length: 0.12, volume: 0.04 },
-        serve: { notes: [659, 784, 988], wave: "triangle", step: 0.07, length: 0.16, volume: 0.05 },
-        pickup: { notes: [523], wave: "sine", step: 0.04, length: 0.12, volume: 0.045 },
-        coin: { notes: [659, 880], wave: "sine", step: 0.12, length: 0.21, volume: 0.07 },
-        upgrade: { notes: [523, 659, 784], wave: "triangle", step: 0.08, length: 0.17, volume: 0.055 },
-        success: { notes: [659, 784, 1047], wave: "sine", step: 0.09, length: 0.22, volume: 0.06 },
-        error: { notes: [392, 330], wave: "triangle", step: 0.09, length: 0.16, volume: 0.04 },
-      }[kind] || { notes: [523, 659], wave: "sine", step: 0.12, length: 0.21, volume: 0.07 };
-      sound.notes.forEach((frequency, index) => {
-        const start = now + index * sound.step;
-        const oscillator = context.createOscillator();
-        const gain = context.createGain();
-        oscillator.type = sound.wave;
-        oscillator.frequency.value = frequency;
-        gain.gain.setValueAtTime(0.0001, start);
-        gain.gain.exponentialRampToValueAtTime(sound.volume, start + 0.018);
-        gain.gain.exponentialRampToValueAtTime(0.0001, start + sound.length);
-        oscillator.connect(gain);
-        gain.connect(context.destination);
-        oscillator.start(start);
-        oscillator.stop(start + sound.length + 0.01);
-      });
-      window.setTimeout(() => context.close(), 900);
-    } catch {
-      // Audio is optional; it never blocks an interaction.
-    }
+    audioService.play(kind);
   }
 
   function randomItem(items) {
@@ -1250,7 +1098,8 @@
       const dx = (target.x - x) * scene.clientWidth / 100;
       const dy = (target.y - y) * scene.clientHeight / 100;
       const distance = Math.hypot(dx, dy);
-      const speed = STAFF_SPEED * speedMultiplier * Math.max(0.75, scene.clientWidth / 1000);
+      const easeIn = Math.min(1, Math.max(0.58, distance / 54));
+      const speed = STAFF_SPEED * speedMultiplier * Math.max(0.75, scene.clientWidth / 1000) * easeIn;
 
       if (distance <= Math.max(0.5, speed * dt)) {
         element.style.left = `${target.x}%`;
@@ -1664,7 +1513,8 @@
     guest.dom.orderAction.append(lock);
     guest.dom.orderAction.hidden = false;
     showGuestEmotion(guest, randomItem(negativeMoods));
-    state.reputationPoints = Math.max(0, Math.round(state.reputationPoints * 0.9 * 10) / 10);
+    effects.pulse(guest.dom.customer, "error");
+    economy.adjustReputation(-state.reputationPoints * 0.1);
     el.reputation.textContent = reputationLabel();
     saveProgress();
     schedule(() => {
@@ -1681,10 +1531,10 @@
   }
 
   function seatGuest(guest, tableIndex) {
+    if (!diningRoom.reserve(tableIndex, guest.id)) return false;
     guest.tableIndex = tableIndex;
     guest.phase = "entering";
     state.guests.set(guest.id, guest);
-    state.occupiedTables.set(tableIndex, guest.id);
     createGuestElements(guest);
     applyGuestPosition(guest);
     const start = guest.fromQueue && guest.queuePosition
@@ -1721,12 +1571,14 @@
     }
     chime();
     render();
+    return true;
   }
 
   function dispatchWaitingGuests() {
     let tableIndex = findFreeTable();
     while (tableIndex !== -1 && state.waitingQueue.length) {
-      const guest = state.waitingQueue.shift();
+      const guest = diningRoom.takeNext(state.waitingQueue);
+      if (!guest) break;
       const marker = state.queueMarkers.get(guest.id);
       guest.queuePosition = marker
         ? { x: parseFloat(marker.style.left), y: parseFloat(marker.style.top) }
@@ -1748,7 +1600,8 @@
       showLobbyTransfer(guest, activity, () => runCustomerActivity(guest));
       return true;
     }
-    return admitRestaurantGuest(guest);
+    runCustomerActivity(guest);
+    return true;
   }
 
   function showLobbyTransfer(guest, area, onArrive) {
@@ -1775,13 +1628,13 @@
   }
 
   function admitRestaurantGuest(guest) {
+    if (state.waitingQueue.length && findFreeTable() !== -1) dispatchWaitingGuests();
     const tableIndex = findFreeTable();
     if (tableIndex !== -1 && state.waitingQueue.length === 0) {
       seatGuest(guest, tableIndex);
       return true;
     }
-    if (state.waitingQueue.length >= waitingQueueLimit()) return false;
-    state.waitingQueue.push(guest);
+    if (!diningRoom.queueGuest(state.waitingQueue, guest)) return false;
     renderWaitingQueue();
     render();
     chime();
@@ -1791,14 +1644,19 @@
   function runCustomerActivity(guest) {
     const activity = window.TiemNhoSystems.journeys.current(guest);
     if (!activity || !state.journeyGuests.has(guest)) return;
+    const activityToken = window.TiemNhoSystems.journeys.beginActivity(guest);
+    if (!activityToken) return;
+    guest.activeJourneyToken = activityToken;
     if (activity === "restaurant") {
       if (!admitRestaurantGuest(guest)) schedule(() => runCustomerActivity(guest), 1200);
       return;
     }
     const controller = mapControllers[activity];
     if (!controller?.canVisit?.() || !controller.visitGuest(guest, () => {
-      window.TiemNhoSystems.journeys.advance(guest);
-      if (window.TiemNhoSystems.journeys.isComplete(guest)) {
+      const completed = window.TiemNhoSystems.journeys.completeActivity(guest, activityToken);
+      if (!completed) return;
+      guest.activeJourneyToken = null;
+      if (completed.isComplete) {
         state.journeyGuests.delete(guest);
         render();
         return;
@@ -2037,13 +1895,14 @@
       return;
     }
     state.moneyPickupInProgress = true;
+    effects.burstAt(state.paymentButtons.get(tableIndex), "coin");
     setStaffCarry("money");
     moveStaffTo({ ...payment.anchor }, "collecting-money", () => {
       el.staffCarry.hidden = true;
       el.staffCarry.classList.remove("is-carrying-money");
       const collectedPayment = state.pendingPayments.get(tableIndex);
       if (collectedPayment) {
-        state.money += collectedPayment.amount;
+        economy.earn(collectedPayment.amount);
         state.pendingCoins = Math.max(0, state.pendingCoins - collectedPayment.amount);
         state.pendingPayments.delete(tableIndex);
       }
@@ -2062,9 +1921,10 @@
     guest.paid = true;
     if (Math.random() < positiveMoodChance) {
       const emotion = randomItem(positiveMoods);
-      state.reputationPoints += guest.revenue * 0.2;
+      economy.earn(0, guest.revenue * 0.2);
       el.reputation.textContent = reputationLabel();
       showGuestEmotion(guest, emotion);
+      effects.burstAt(guest.dom.customer, "upgrade");
       saveProgress();
     }
     const anchor = {
@@ -2103,17 +1963,20 @@
       guest.dom.customer.remove();
       guest.dom.dish.remove();
       guest.dom.orderAction.remove();
-      state.occupiedTables.delete(guest.tableIndex);
+      diningRoom.release(guest.tableIndex, guest.id);
       state.guests.delete(guest.id);
       dispatchWaitingGuests();
       if (state.journeyGuests.has(guest)) {
-        window.TiemNhoSystems.journeys.advance(guest);
-        if (window.TiemNhoSystems.journeys.isComplete(guest)) state.journeyGuests.delete(guest);
-        else schedule(() => {
-          const next = window.TiemNhoSystems.journeys.current(guest);
-          if (next !== "restaurant") showLobbyTransfer(guest, next, () => runCustomerActivity(guest));
-          else runCustomerActivity(guest);
-        }, 250);
+        const completed = window.TiemNhoSystems.journeys.completeActivity(guest, guest.activeJourneyToken);
+        if (completed) {
+          guest.activeJourneyToken = null;
+          if (completed.isComplete) state.journeyGuests.delete(guest);
+          else schedule(() => {
+            const next = window.TiemNhoSystems.journeys.current(guest);
+            if (next !== "restaurant") showLobbyTransfer(guest, next, () => runCustomerActivity(guest));
+            else runCustomerActivity(guest);
+          }, 250);
+        }
         render();
       }
     }, route.length - 1, "exit");
@@ -2131,9 +1994,9 @@
 
   function purchaseChanceUpgrade() {
     const cost = chanceCost();
-    if (state.chanceLevel >= maxChanceLevel || state.money < cost) return;
-    state.money -= cost;
+    if (state.chanceLevel >= maxChanceLevel || !economy.spend(cost)) return;
     state.chanceLevel += 1;
+    effects.burstAt(el.chanceUpgrade, "upgrade");
     chime("upgrade");
     render();
     saveProgress();
@@ -2141,9 +2004,9 @@
 
   function purchaseReputationUpgrade() {
     const cost = reputationCost();
-    if (state.reputationLevel >= maxReputationLevel || state.money < cost) return;
-    state.money -= cost;
+    if (state.reputationLevel >= maxReputationLevel || !economy.spend(cost)) return;
     state.reputationLevel += 1;
+    effects.burstAt(el.reputationUpgrade, "upgrade");
     chime("upgrade");
     arrangeTables();
     dispatchWaitingGuests();
@@ -2154,9 +2017,9 @@
 
   function purchaseQueueUpgrade() {
     const cost = queueCost();
-    if (state.money < cost) return;
-    state.money -= cost;
+    if (!economy.spend(cost)) return;
     state.queueLevel += 1;
+    effects.burstAt(el.queueUpgrade, "upgrade");
     chime("upgrade");
     render();
     saveProgress();
@@ -2170,9 +2033,9 @@
     };
     const upgrade = levels[key];
     const cost = upgrade.cost();
-    if (state[upgrade.field] >= upgrade.max || state.money < cost) return;
-    state.money -= cost;
+    if (state[upgrade.field] >= upgrade.max || !economy.spend(cost)) return;
     state[upgrade.field] += 1;
+    effects.burstAt(key === "stoves" ? el.kitchenStoveUpgrade : key === "cooking" ? el.kitchenCookUpgrade : el.kitchenChefUpgrade, "upgrade");
     chime("upgrade");
     if (key === "stoves") arrangeTables();
     render();
@@ -2184,9 +2047,9 @@
     const catalog = area === "kitchen" ? kitchenFurnitureNames : hallFurnitureNames;
     const level = state[field];
     const cost = interiorCost(level);
-    if (level >= catalog.length || state.money < cost) return;
-    state.money -= cost;
+    if (level >= catalog.length || !economy.spend(cost)) return;
     state[field] += 1;
+    effects.burstAt(area === "kitchen" ? el.kitchenInteriorUpgrade : el.hallInteriorUpgrade, "upgrade");
     chime("upgrade");
     renderSceneProps();
     rebuildStaffGrid();
@@ -2253,27 +2116,26 @@
   el.testAddMoney.addEventListener("click", () => {
     const amount = Math.floor(Number(el.testMoneyAmount.value));
     if (!Number.isFinite(amount) || amount < 1 || amount > 1_000_000_000) return;
-    state.money += amount;
+    economy.earn(amount);
     chime("upgrade");
     render();
     saveProgress();
   });
   el.testResetGame.addEventListener("click", () => {
     if (!window.confirm("Tạo mới màn chơi và xóa tiến độ đã lưu?")) return;
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } finally {
-      window.location.reload();
-    }
+    progressStore.clear();
+    window.location.reload();
   });
   el.sound.addEventListener("click", () => {
     state.muted = !state.muted;
+    audioService.setMuted(state.muted);
     el.sound.setAttribute("aria-pressed", String(!state.muted));
     el.sound.setAttribute("aria-label", state.muted ? "Bật âm thanh" : "Tắt âm thanh");
     if (!state.muted) chime("success");
   });
 
   loadProgress();
+  audioService.setMuted(state.muted);
   initializeMapControllers();
   arrangeTables();
   renderFoodCounters();

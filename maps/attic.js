@@ -4,7 +4,6 @@
     let level = Math.max(0, Math.min(5, Number(saved.level) || 0));
     let visitors = [];
     let layout = context.getLayout?.() || "desktop";
-    let currentAttraction = null;
     const guestRoute = window.TiemNhoSystems.movement.routes.attic;
     root.replaceChildren();
 
@@ -43,7 +42,9 @@
       target.className = "attic-mini-target";
       target.setAttribute("aria-label", `Mục tiêu ${index + 1}`);
       target.innerHTML = "<span aria-hidden=\"true\">✦</span>";
-      target.addEventListener("click", () => reflexGame?.hit(index));
+      target.addEventListener("click", () => {
+        if (reflexGame?.hit(index)) context.effect?.("upgrade", target);
+      });
       gamePanel.append(target);
       targets.push(target);
     }
@@ -58,7 +59,6 @@
       },
       onFinish({ hits, completed }) {
         gamePanel.hidden = true;
-        currentAttraction = null;
         attractionButtons.forEach(({ button }) => button.classList.remove("is-playing"));
         if (hits > 0) {
           context.reward?.(hits * (8 + level * 2) + (completed ? 16 : 0), hits + (completed ? 3 : 0));
@@ -84,6 +84,7 @@
       const station = Math.floor(Math.random() * furniture.length);
       const guest = { customer, element: document.createElement("div"), station, routeId: 0 };
       guest.element.className = "map-visitor attic-visitor";
+      guest.element.dataset.spriteFolder = customer.spriteFolder;
       guest.element.innerHTML = "<img alt=\"\" draggable=\"false\"><span class=\"attic-guest-sparkle\" aria-hidden=\"true\">✦</span>";
       guest.element.querySelector("img").src = `./assets/sprites/${customer.spriteFolder}/south.png`;
       visitorLayer.append(guest.element);
@@ -106,6 +107,7 @@
         guest.element.classList.add("is-departing");
         visitors = visitors.filter((item) => item !== guest);
         walkGuest(guest, [mid, guestRoute.junction, guestRoute.entrance]).then(() => {
+          context.effect?.("coin", guest.element);
           guest.element.remove();
           context.reward?.(18 + level * 4 + Math.floor(Math.random() * 8), 1 + Math.floor(level / 2));
           context.playSound?.("coin");
@@ -117,7 +119,6 @@
     }
     function startMiniGame(id) {
       if (reflexGame.active) reflexGame.stop(false);
-      currentAttraction = id;
       gamePanel.hidden = false;
       attractionButtons.forEach(({ button }) => button.classList.toggle("is-playing", button.classList.contains(`attic-attraction--${id}`)));
       reflexGame.start();

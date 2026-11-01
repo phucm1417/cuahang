@@ -6,22 +6,29 @@
     <meta name="theme-color" content="#f6eed9" />
     <meta name="description" content="Quản lý nhà hàng pixel art: mời khách, phục vụ món và phát triển danh tiếng." />
     <title>Tiệm Nhỏ — Nhà hàng của bạn</title>
-    <link rel="stylesheet" href="./styles.css?v=56" />
-    <script src="./maps/registry.js?v=56" defer></script>
-    <script src="./systems/areas.js?v=56" defer></script>
-    <script src="./systems/characters.js?v=56" defer></script>
-    <script src="./systems/journeys.js?v=56" defer></script>
-    <script src="./systems/map-navigation.js?v=56" defer></script>
-    <script src="./systems/economy.js?v=56" defer></script>
-    <script src="./systems/upgrades.js?v=56" defer></script>
-    <script src="./systems/trade.js?v=56" defer></script>
-    <script src="./systems/games.js?v=56" defer></script>
-    <script src="./systems/movement.js?v=56" defer></script>
-    <script src="./maps/restaurant.js?v=56" defer></script>
-    <script src="./maps/kitchen.js?v=56" defer></script>
-    <script src="./maps/garden.js?v=56" defer></script>
-    <script src="./maps/attic.js?v=56" defer></script>
-    <script src="./game.js?v=56" defer></script>
+    <link rel="stylesheet" href="./styles.css?v=59" />
+    <link rel="stylesheet" href="./assets/styles/polish.css?v=59" />
+    <script src="./maps/registry.js?v=59" defer></script>
+    <script src="./systems/catalog.js?v=59" defer></script>
+    <script src="./systems/areas.js?v=59" defer></script>
+    <script src="./systems/characters.js?v=59" defer></script>
+    <script src="./systems/journeys.js?v=59" defer></script>
+    <script src="./systems/map-navigation.js?v=59" defer></script>
+    <script src="./systems/economy.js?v=59" defer></script>
+    <script src="./systems/upgrades.js?v=59" defer></script>
+    <script src="./systems/trade.js?v=59" defer></script>
+    <script src="./systems/games.js?v=59" defer></script>
+    <script src="./systems/movement.js?v=59" defer></script>
+    <script src="./systems/storage.js?v=59" defer></script>
+    <script src="./systems/state.js?v=59" defer></script>
+    <script src="./systems/audio.js?v=59" defer></script>
+    <script src="./systems/effects.js?v=59" defer></script>
+    <script src="./systems/restaurant.js?v=59" defer></script>
+    <script src="./maps/restaurant.js?v=59" defer></script>
+    <script src="./maps/kitchen.js?v=59" defer></script>
+    <script src="./maps/garden.js?v=59" defer></script>
+    <script src="./maps/attic.js?v=59" defer></script>
+    <script src="./game.js?v=59" defer></script>
   </head>
   <body>
     <main class="game-shell">
@@ -81,6 +88,7 @@
               <div class="waiting-queue" id="waiting-queue" role="list" aria-label="Khách đang chờ"></div>
               <div class="guest-layer" id="guest-layer"></div>
               <div class="order-layer" id="order-layer" aria-label="Order của khách"></div>
+              <div class="effects-layer" id="effects-layer" aria-hidden="true"></div>
 
               <div class="staff" id="staff" aria-hidden="true">
                 <img src="./assets/sprites/Idle_5/south.png" alt="" draggable="false" />

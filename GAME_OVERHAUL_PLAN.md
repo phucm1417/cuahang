@@ -80,6 +80,7 @@ Keep the current entry point and migrate behavior incrementally rather than rewr
 ```text
 game.js                     bootstrap and top-level orchestration only
 systems/
+  catalog.js                 menu, actor, and furniture data
   characters.js             identity and actor setup
   journeys.js               itinerary state machine and lifecycle tokens
   movement.js               path following, facing, arrival, cancellation
@@ -89,7 +90,11 @@ systems/
   upgrades.js               upgrade catalog, costs, effects
   trade.js                  crops, stock, buyer queue, sale transaction
   games.js                  mini-game lifecycle and reward contract
-  effects.js                reusable visual/audio feedback
+  restaurant.js             table reservations and dining queue rules
+  storage.js                validated, versioned save/load adapter
+  state.js                  runtime session state and safe save migration
+  audio.js                  shared sound palette and mute handling
+  effects.js                reusable particle and pulse feedback
 maps/
   <area>.js                 area rendering, local interactions, visitor waypoints
 ui/                         shared modal, HUD, counter, and responsive controls

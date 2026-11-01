@@ -101,6 +101,7 @@
         if (!crop || !context.spend?.(crop.seed)) return;
         data.plots[index] = { crop: crop.id, readyAt: now + crop.grow, watered: false };
         context.playSound?.("plant");
+        context.effect?.("leaf", plotNodes[index]?.button);
         changed();
         return;
       }
@@ -110,6 +111,7 @@
         data.inventory[inventoryIndex] += 1;
         data.plots[index] = null;
         context.playSound?.("harvest");
+        context.effect?.("leaf", plotNodes[index]?.button);
         changed();
         return;
       }
@@ -160,73 +162,9 @@
     function queuePoint(index) {
       return { wide: guestRoute.queue.wide[Math.min(index, 2)], portrait: guestRoute.queue.portrait[Math.min(index, 2)] };
     }
-    function repositionQueue() {
-      visitors.forEach((guest, index) => {
-        guest.queueIndex = index;
-        if (guest.arrived && !guest.departing) walkGuest(guest, [queuePoint(index)]);
-      });
-    }
     function walkGuest(guest, points) {
       const routeId = ++guest.routeId;
       return window.TiemNhoSystems.movement.walk(guest.element, points, layout, () => routeId !== guest.routeId);
-    }
-    async function sendGuestToGate(guest) {
-      guest.departing = true;
-      await walkGuest(guest, [guestRoute.market, guestRoute.junction, guestRoute.entrance]);
-      guest.element.remove();
-    }
-    async function welcomeGuest(guest) {
-      await walkGuest(guest, [guestRoute.entrance, guestRoute.junction, guestRoute.market, queuePoint(guest.queueIndex)]);
-      if (!guest.departing) { guest.arrived = true; render(); }
-    }
-    function releaseGuest(guest) {
-      visitors = visitors.filter((item) => item !== guest);
-      guest.element.querySelector(".map-visitor__order").disabled = true;
-      guest.element.classList.add("is-departing");
-      sendGuestToGate(guest);
-      repositionQueue();
-    }
-    function visit() {
-      if (visitors.length >= 3) return false;
-      const crop = crops[Math.floor(Math.random() * crops.length)];
-      const guest = {
-        crop,
-        element: document.createElement("div"),
-        timer: null,
-        queueIndex: visitors.length,
-        arrived: false,
-        routeId: 0,
-      };
-      guest.element.className = "map-visitor garden-visitor is-arriving";
-      guest.element.innerHTML = `<img alt="" draggable="false"><button type="button" class="map-visitor__order" aria-label="Mua ${crop.name} · ${crop.price} xu"><img src="./assets/maps/crops/${crop.asset}" alt=""><small>${crop.price}</small></button>`;
-      guest.element.querySelector("img").src = `./assets/sprites/Idle_${2 + Math.floor(Math.random() * 9)}/south.png`;
-      const order = guest.element.querySelector("button");
-      order.disabled = true;
-      order.addEventListener("click", () => {
-        const index = crops.indexOf(crop);
-        if (data.inventory[index] < 1) return;
-        data.inventory[index] -= 1;
-        window.clearTimeout(guest.timer);
-        context.reward?.(crop.price + data.level * 4, crop.fame + Math.floor(data.level / 2));
-        context.playSound?.("coin");
-        releaseGuest(guest);
-        changed();
-      });
-      visitorLayer.append(guest.element);
-      visitors.push(guest);
-      const entrance = layout === "portrait" ? guestRoute.entrance.portrait : guestRoute.entrance.wide;
-      guest.element.style.left = `${entrance[0]}%`;
-      guest.element.style.top = `${entrance[1]}%`;
-      guest.element.style.opacity = "0";
-      requestAnimationFrame(() => { guest.element.style.opacity = "1"; });
-      guest.element.classList.remove("is-arriving");
-      welcomeGuest(guest);
-      guest.timer = window.setTimeout(() => {
-        if (!visitors.includes(guest)) return;
-        releaseGuest(guest);
-        changed();
-      }, 25000);
-      return true;
     }
     function compactBuyerQueue() {
       buyerQueue.forEach((guest, index) => {
@@ -237,6 +175,7 @@
     }
     function finishJourneyVisitor(guest, result = {}, alreadyAtGate = false) {
       if (!visitors.includes(guest)) return;
+      window.clearTimeout(guest.timer);
       visitors = visitors.filter((item) => item !== guest);
       if (guest.buyer) buyerQueue = buyerQueue.filter((item) => item !== guest);
       const order = guest.element.querySelector(".map-visitor__order");
@@ -278,6 +217,7 @@
         queueIndex: buyerQueue.length, arrived: false, routeId: 0, departing: false,
       };
       guest.element.className = `map-visitor garden-visitor ${buyer ? "is-buyer" : "is-wanderer"}`;
+      guest.element.dataset.spriteFolder = customer.spriteFolder;
       guest.element.innerHTML = `<img alt="" draggable="false">${buyer ? `<button type="button" class="map-visitor__order" aria-label="Mua ${crop.name} · ${crop.price} xu"><img src="./assets/maps/crops/${crop.asset}" alt=""><small>${crop.price}</small></button>` : ""}`;
       guest.element.querySelector("img").src = `./assets/sprites/${customer.spriteFolder}/south.png`;
       const order = guest.element.querySelector(".map-visitor__order");

@@ -15,6 +15,21 @@
     }),
   });
   function pointFor(point, layout) { return layout === "portrait" ? point.portrait : point.wide; }
+  function directionFor(dx, dy, aspect = 1) {
+    if (Math.abs(dx) + Math.abs(dy) < 0.001) return "south";
+    const x = dx * aspect;
+    if (Math.abs(x) < Math.abs(dy) * 0.42) return dy < 0 ? "north" : "south";
+    if (Math.abs(dy) < Math.abs(x) * 0.42) return x < 0 ? "west" : "east";
+    if (x < 0) return dy < 0 ? "north-west" : "south-west";
+    return dy < 0 ? "north-east" : "south-east";
+  }
+  function face(element, direction) {
+    const image = element.querySelector("img");
+    const folder = element.dataset.spriteFolder;
+    if (!image || !folder) return;
+    const nextSource = `./assets/sprites/${folder}/${direction}.png`;
+    if (!image.getAttribute("src")?.endsWith(`/${direction}.png`)) image.src = nextSource;
+  }
   async function walk(element, points, layout, cancelled = () => false) {
     if (!element?.isConnected) return;
     element.classList.add("is-walking");
@@ -23,15 +38,20 @@
       const [x, y] = pointFor(point, layout);
       const currentX = Number.parseFloat(element.style.left) || x;
       const currentY = Number.parseFloat(element.style.top) || y;
-      const duration = Math.min(1150, Math.max(360, 360 + Math.hypot((x - currentX) * 0.9, y - currentY) * 23));
+      const bounds = element.parentElement?.getBoundingClientRect();
+      const aspect = bounds?.height ? bounds.width / bounds.height : 1;
+      const distance = Math.hypot((x - currentX) * aspect, y - currentY);
+      const duration = Math.min(1050, Math.max(300, 240 + distance * 20));
+      face(element, directionFor(x - currentX, y - currentY, aspect));
       element.style.setProperty("--travel-duration", `${duration}ms`);
       element.style.left = `${x}%`;
       element.style.top = `${y}%`;
+      element.style.zIndex = String(8 + Math.round(y / 100 * 5));
       await new Promise((resolve) => window.setTimeout(resolve, duration));
       if (cancelled()) return;
     }
     if (element.isConnected) element.classList.remove("is-walking");
   }
   window.TiemNhoSystems ||= {};
-  window.TiemNhoSystems.movement = Object.freeze({ routes, pointFor, walk });
+  window.TiemNhoSystems.movement = Object.freeze({ routes, pointFor, directionFor, walk });
 })();
