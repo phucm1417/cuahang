@@ -4,6 +4,8 @@
     let level = Math.max(0, Math.min(5, Number(saved.level) || 0));
     let visitors = [];
     let currentGame = null;
+    let layout = context.getLayout?.() || "desktop";
+    const guestRoute = window.TiemNhoRoutes.routes.attic;
     root.replaceChildren();
 
     const attractions = document.createElement("div");
@@ -48,26 +50,48 @@
     root.append(gamePanel);
 
     function changed() { context.onChange?.(); }
+    function attractionPoint(index) {
+      return {
+        wide: guestRoute.attractions.wide[index],
+        portrait: guestRoute.attractions.portrait[index],
+      };
+    }
+    function walkGuest(guest, points) {
+      const routeId = ++guest.routeId;
+      return window.TiemNhoRoutes.walk(guest.element, points, layout, () => routeId !== guest.routeId);
+    }
     function visit() {
       if (visitors.length >= 4) return false;
-      const guest = document.createElement("div");
-      guest.className = "map-visitor attic-visitor is-arriving";
-      guest.innerHTML = "<img alt=\"\" draggable=\"false\"><span class=\"attic-guest-sparkle\" aria-hidden=\"true\">✦</span>";
-      guest.querySelector("img").src = `./assets/sprites/Idle_${2 + Math.floor(Math.random() * 9)}/south.png`;
-      visitorLayer.append(guest);
+      const station = visitors.length % 3;
+      const guest = { element: document.createElement("div"), station, routeId: 0 };
+      guest.element.className = "map-visitor attic-visitor is-arriving";
+      guest.element.innerHTML = "<img alt=\"\" draggable=\"false\"><span class=\"attic-guest-sparkle\" aria-hidden=\"true\">✦</span>";
+      guest.element.querySelector("img").src = `./assets/sprites/Idle_${2 + Math.floor(Math.random() * 9)}/south.png`;
+      visitorLayer.append(guest.element);
       visitors.push(guest);
-      guest.style.left = `${75 + (visitors.length - 1) * 6}%`;
-      guest.style.top = "46%";
-      window.setTimeout(() => guest.classList.remove("is-arriving"), 900);
+      const point = layout === "portrait" ? guestRoute.entrance.portrait : guestRoute.entrance.wide;
+      guest.element.style.left = `${point[0]}%`;
+      guest.element.style.top = `${point[1]}%`;
+      guest.element.style.opacity = "0";
+      requestAnimationFrame(() => { guest.element.style.opacity = "1"; });
+      guest.element.classList.remove("is-arriving");
+      const stop = attractionPoint(station);
+      const mid = {
+        wide: [stop.wide[0], guestRoute.junction.wide[1]],
+        portrait: [stop.portrait[0], guestRoute.junction.portrait[1]],
+      };
+      walkGuest(guest, [guestRoute.entrance, guestRoute.junction, mid, stop]);
       const stay = 7000 + Math.random() * 5000;
       window.setTimeout(() => {
         if (!visitors.includes(guest)) return;
-        guest.classList.add("is-leaving");
-        window.setTimeout(() => guest.remove(), 700);
+        guest.element.classList.add("is-departing");
         visitors = visitors.filter((item) => item !== guest);
-        context.reward?.(18 + level * 4 + Math.floor(Math.random() * 8), 1 + Math.floor(level / 2));
-        context.playSound?.("coin");
-        changed();
+        walkGuest(guest, [mid, guestRoute.junction, guestRoute.entrance]).then(() => {
+          guest.element.remove();
+          context.reward?.(18 + level * 4 + Math.floor(Math.random() * 8), 1 + Math.floor(level / 2));
+          context.playSound?.("coin");
+          changed();
+        });
       }, stay);
       return true;
     }
@@ -128,7 +152,8 @@
       };
     }
     function canVisit() { return visitors.length < 4; }
-    function setLayout(layout) {
+    function setLayout(nextLayout) {
+      layout = nextLayout;
       attractionButtons.forEach(({ item, button }) => {
         const point = layout === "portrait" ? item.portrait : [item.x, item.y];
         button.style.left = `${point[0] * 100}%`;

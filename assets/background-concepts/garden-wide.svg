@@ -15,6 +15,7 @@
   <path d="M82 178h50m-50 115h50m-50 115h50m-50 115h50m-50 115h50m-50 115h50M1668 178h50m-50 115h50m-50 115h50m-50 115h50m-50 115h50m-50 115h50" stroke="#e3c391" stroke-width="10"/>
   <path d="M758 146h284v42H758z" fill="#bf8955" stroke="#734e37" stroke-width="10"/><path d="M785 188v98m230-98v98" stroke="#81583d" stroke-width="16"/><path d="M782 277h236v30H782z" fill="#dcc18b" stroke="#805c40" stroke-width="8"/>
   <path d="M852 308h96v568h-96z" fill="url(#path)"/><path d="M831 308h138v18H831z" fill="#c6a675"/>
+  <path d="M900 348C1055 348 1230 354 1467 368" fill="none" stroke="#a58a5d" stroke-width="108" stroke-linecap="round" opacity=".38"/><path d="M900 340C1055 340 1230 346 1467 360" fill="none" stroke="url(#path)" stroke-width="82" stroke-linecap="round"/><path d="M924 340C1082 340 1245 346 1432 358" fill="none" stroke="#c7ae80" stroke-width="7" stroke-dasharray="3 29" stroke-linecap="round" opacity=".8"/>
   <path d="M870 358h60m-60 78h60m-60 78h60m-60 78h60m-60 78h60m-60 78h60" stroke="#c7ae80" stroke-width="7" opacity=".7"/>
   <g stroke="#72543c" stroke-width="12" fill="#a9c28a"><path d="M205 242q-20-104 42-144 57 36 42 144z"/><path d="M150 263q-4-82 57-115 48 54 20 115z"/><path d="M274 263q8-82-43-115-52 50-28 115z"/><path d="M222 263v117" fill="none"/></g>
   <g fill="#d5b27b" stroke="#805b3f" stroke-width="8"><path d="M1450 238h205v104h-205z"/><path d="M1472 342v88m161-88v88" fill="none" stroke-width="14"/><path d="M1468 228h170v18h-170z" fill="#e6cf9e"/></g>

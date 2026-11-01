@@ -156,7 +156,8 @@
     hallFoodCounter: document.querySelector("#hall-food-counter"),
     hallFoodSlots: document.querySelector("#hall-food-slots"),
     mapToggle: document.querySelector("#map-toggle"),
-    mapToggleIcon: document.querySelector("#map-toggle-icon"),
+    mapPicker: document.querySelector("#map-picker"),
+    mapPickerNodes: document.querySelector("#map-picker-nodes"),
     guestLayer: document.querySelector("#guest-layer"),
     orderLayer: document.querySelector("#order-layer"),
     waitingQueue: document.querySelector("#waiting-queue"),
@@ -299,6 +300,38 @@
     };
     mapControllers.garden = window.TiemNhoMaps.get("garden").create(el.gardenMapLayer, context, state.gardenData || {});
     mapControllers.attic = window.TiemNhoMaps.get("attic").create(el.atticMapLayer, context, state.atticData || {});
+    initializeMapPicker();
+  }
+
+  function initializeMapPicker() {
+    const positions = {
+      restaurant: [50, 55],
+      kitchen: [18, 79],
+      garden: [82, 55],
+      attic: [50, 17],
+    };
+    el.mapPickerNodes.replaceChildren();
+    MAP_ORDER.forEach((id) => {
+      const definition = window.TiemNhoMaps.get(id);
+      const button = document.createElement("button");
+      const [x, y] = positions[id] || [50, 50];
+      button.type = "button";
+      button.className = `map-picker__node map-picker__node--${id}`;
+      button.dataset.map = id;
+      button.style.setProperty("--map-x", `${x}%`);
+      button.style.setProperty("--map-y", `${y}%`);
+      button.setAttribute("aria-label", definition.name);
+      button.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${definition.icon}</svg>`;
+      button.addEventListener("click", () => {
+        chime("click");
+        state.mapMode = id;
+        el.mapPicker.hidden = true;
+        el.mapToggle.setAttribute("aria-expanded", "false");
+        renderMapMode();
+        render();
+      });
+      el.mapPickerNodes.append(button);
+    });
   }
 
   function coins(value) {
@@ -473,11 +506,12 @@
     el.staff.querySelector("img").src = spriteUrl("Idle_5", staffMotion.facing);
     el.chef.querySelector("img").src = spriteUrl("Idle", chefMotion.facing);
     el.chef.classList.add("is-visible");
-    const nextMap = MAP_ORDER[(MAP_ORDER.indexOf(state.mapMode) + 1) % MAP_ORDER.length];
-    const nextDefinition = window.TiemNhoMaps.get(nextMap);
-    el.mapToggle.removeAttribute("aria-pressed");
-    el.mapToggle.setAttribute("aria-label", `Đến ${nextDefinition.name}`);
-    el.mapToggleIcon.innerHTML = nextDefinition.icon;
+    el.mapPickerNodes.querySelectorAll(".map-picker__node").forEach((button) => {
+      const active = button.dataset.map === state.mapMode;
+      button.classList.toggle("is-active", active);
+      if (active) button.setAttribute("aria-current", "page");
+      else button.removeAttribute("aria-current");
+    });
     el.invite.setAttribute("aria-label", inGarden ? "Đón khách đến vườn" : inAttic ? "Đón khách lên tầng gác" : "Mời khách");
     if (el.upgradePanel.open) syncPanelLayout();
   }
@@ -2117,10 +2151,19 @@
   el.menuPanel.addEventListener("close", syncPanelLayout);
   el.mapToggle.addEventListener("click", () => {
     chime("click");
-    const currentMapIndex = MAP_ORDER.indexOf(state.mapMode);
-    state.mapMode = MAP_ORDER[(currentMapIndex + 1) % MAP_ORDER.length];
-    renderMapMode();
-    render();
+    el.mapPicker.hidden = !el.mapPicker.hidden;
+    el.mapToggle.setAttribute("aria-expanded", String(!el.mapPicker.hidden));
+  });
+  el.roomScene.addEventListener("pointerdown", (event) => {
+    if (el.mapPicker.hidden || el.mapPicker.contains(event.target) || el.mapToggle.contains(event.target)) return;
+    el.mapPicker.hidden = true;
+    el.mapToggle.setAttribute("aria-expanded", "false");
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || el.mapPicker.hidden) return;
+    el.mapPicker.hidden = true;
+    el.mapToggle.setAttribute("aria-expanded", "false");
+    el.mapToggle.focus();
   });
   el.chanceUpgrade.addEventListener("click", purchaseChanceUpgrade);
   el.reputationUpgrade.addEventListener("click", purchaseReputationUpgrade);

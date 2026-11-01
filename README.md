@@ -27,6 +27,7 @@ Mở [http://localhost:8000](http://localhost:8000) trong trình duyệt. Có th
 - Nút chuyển map lần lượt đi qua **Nhà hàng → Bếp → Vườn → Tầng gác**. Mỗi khu vực có nền, nội thất và module xử lý riêng trong `maps/`, dùng chung tiền, danh vọng, lưu tiến độ và điều khiển của game.
 - Ở **Vườn**, chọn hạt giống ở thanh biểu tượng rồi chạm luống để trồng; chọn bình tưới rồi chạm cây để rút ngắn thời gian lớn. Chạm cây đã chín để thu hoạch. Khách ghé vườn sẽ gọi mua rau hoặc hoa; chạm bong bóng món hàng để bán. Nâng cấp vườn mở thêm luống.
 - **Tầng gác** có đàn piano, máy trò chơi và bàn giải trí. Chạm một món nội thất để bắt đầu trò chơi phản xạ; chạm các mục tiêu đang sáng để nhận xu và danh vọng. Khách đến tầng gác tự tham gia và trả xu khi rời đi.
+- Nút biểu tượng bản đồ mở sơ đồ thu nhỏ để chọn nhanh bốn khu vực. Sảnh là điểm trung tâm; vườn nối bằng lối cổng, tầng gác nối bằng cầu thang, còn bếp là nhánh phục vụ nội bộ. Khách đi theo lối vào, điểm dừng và đường quay ra đã định sẵn trong `maps/routes.js`.
 
 Ảnh nền và sprite nhân vật nằm trong thư mục dự án. Bàn và ghế là hai asset pixel art riêng trong `assets/`; khách ngồi ở ghế chính giữa phía trên bàn. Sprite nhân vật đã được cắt phần trong suốt thừa để hiển thị cân đối.
 
@@ -40,7 +41,7 @@ Xem [HANDOFF.md](./HANDOFF.md) để biết trạng thái chi tiết và cách t
 - Trên máy tính, bản đồ khóa theo khung ngang và chiếm gần trọn màn hình; trên điện thoại cầm dọc, game tự đổi sang bản đồ toàn màn hình dọc với nền riêng cho sảnh và bếp.
 - Danh vọng và tiền nằm ở góc trên trái bản đồ. Nút thực đơn nằm dưới trái; nút mời khách và nâng cấp nằm dưới phải.
 - Menu mở thành panel nổi bên trái, nâng cấp mở thành panel nổi bên phải; cả hai không làm tối bản đồ và vẫn cho thao tác game phía sau.
-- Biểu tượng ở giữa cạnh phải đổi giữa nhà hàng và bếp. Bản đồ bếp có nền riêng; các bếp nấu nằm đúng vị trí sáu bàn ăn.
+- Biểu tượng bản đồ ở cạnh phải mở bảng chọn khu vực dạng thu nhỏ; có thể chạm biểu tượng khu vực để chuyển trực tiếp. Bản đồ bếp có nền riêng; các bếp nấu nằm đúng vị trí sáu bàn ăn.
 - Game có 55 món; ban đầu chỉ mở món đầu. Mua lần lượt món kế tiếp bằng xu; giá mở khóa tăng theo cấp số nhân. Khách chỉ gọi các món đã mở.
 - Cửa tự động ở giữa tường sau mở sang hai bên khi khách vào và tự đóng sau khi khách qua cửa.
 - Nền ngang máy tính: `assets/background-concepts/restaurant-wide-v2.svg` và `kitchen-wide-v1.svg`. Nền dọc điện thoại: `restaurant-portrait.svg` và `kitchen-portrait.svg`.
